@@ -36,7 +36,7 @@ let
 
     # Terraform/OpenTofu
     packer
-    #terraform-docs # TODO: Re-enable when fixed upstream
+    terraform-docs
     terraform-providers.aci
     terraform-providers.artifactory
     terraform-providers.bigip
