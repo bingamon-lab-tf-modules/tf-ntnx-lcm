@@ -1,7 +1,7 @@
 # Lookup Prism Central
 data "nutanix_clusters_v2" "prism_central" {
   limit  = 1
-  filter = "config/clusterFunction/any(t:t eq Clustermgmt.Config.ClusterFunctionRef'PRISM_CENTRAL')"
+  filter = "config/clusterFunction/any(t:t eq Clustermgmt.Config.ClusterFunctionRef\"PRISM_CENTRAL\")"
 }
 
 # Lookup all LCM entities by cluster extID.
@@ -11,7 +11,7 @@ data "nutanix_lcm_entities_v2" "prism_central_lcm_entities" {
 
 # Capture the versions before any upgrade.
 data "nutanix_lcm_entity_v2" "prism_central_entities_before_upgrade" {
-  for_each = { for entity in local.prism_central_lcm_entities_filtered : "${entity.ext_id}" => { ext_id = entity.ext_id, model = entity.entity_model } }
+  for_each = { for entity in local.prism_central_lcm_entities_filtered : entity.ext_id => { ext_id = entity.ext_id, model = entity.entity_model } }
 
   ext_id = each.value.ext_id
 }
@@ -71,7 +71,7 @@ data "nutanix_lcm_status_v2" "prism_central_status_after_upgrade" {
 # TODO: Finally, check the versions before and after for all prism_central.entities_to_upgrade
 # Verify entity versions after upgrade
 data "nutanix_lcm_entity_v2" "prism_central_entities_after_upgrade" {
-  for_each = { for entity in local.prism_central_lcm_entities_filtered : "${entity.ext_id}" => { ext_id = entity.ext_id, model = entity.entity_model, expected_version = (var.prism_central.entities_to_upgrade[entity.entity_model].target_version == "latest" ? entity.available_versions[length(entity.available_versions) - 1] : var.prism_central.entities_to_upgrade[entity.entity_model].target_version) } if var.prism_central.perform_upgrade && contains(keys(var.prism_central.entities_to_upgrade), entity.entity_model) && length(entity.available_versions) > 0 }
+  for_each = { for entity in local.prism_central_lcm_entities_filtered : entity.ext_id => { ext_id = entity.ext_id, model = entity.entity_model, expected_version = (var.prism_central.entities_to_upgrade[entity.entity_model].target_version == "latest" ? entity.available_versions[length(entity.available_versions) - 1] : var.prism_central.entities_to_upgrade[entity.entity_model].target_version) } if var.prism_central.perform_upgrade && contains(keys(var.prism_central.entities_to_upgrade), entity.entity_model) && length(entity.available_versions) > 0 }
 
   ext_id = each.value.ext_id
 

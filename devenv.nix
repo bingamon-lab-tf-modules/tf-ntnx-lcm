@@ -281,6 +281,7 @@ in
         tofu-init "''${MODULE_HOME}" || exit 1
         tofu-validate "''${MODULE_HOME}" || exit 1
         tofu-docs "''${MODULE_HOME}" || exit 1
+        tflint --format=compact --chdir="''${MODULE_HOME}" || exit 1
       '';
     };
 

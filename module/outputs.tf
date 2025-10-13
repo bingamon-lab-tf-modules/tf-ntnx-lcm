@@ -3,7 +3,7 @@ output "cluster_lcm_configs" {
   value = {
     for cluster_key, cluster_config in nutanix_lcm_config_v2.cluster_lcm_settings :
     cluster_key => {
-      cluster_name                    = var.clusters[cluster_key].name
+      cluster_name                    = var.prism_element[cluster_key].name
       cluster_id                      = cluster_config.x_cluster_id
       connectivity_type               = cluster_config.connectivity_type
       darksite_url                    = cluster_config.url
@@ -20,7 +20,7 @@ output "inventory_operations" {
   value = {
     for cluster_key, inventory in nutanix_lcm_perform_inventory_v2.cluster_inventory :
     cluster_key => {
-      cluster_name = var.clusters[cluster_key].name
+      cluster_name = var.prism_element[cluster_key].name
       cluster_id   = inventory.x_cluster_id
     }
   }
@@ -31,7 +31,7 @@ output "precheck_operations" {
   value = {
     for cluster_key, precheck in nutanix_lcm_prechecks_v2.cluster_prechecks :
     cluster_key => {
-      cluster_name = var.clusters[cluster_key].name
+      cluster_name = var.prism_element[cluster_key].name
       cluster_id   = precheck.x_cluster_id
       operation_id = precheck.ext_id
     }
@@ -43,7 +43,7 @@ output "upgrade_operations" {
   value = {
     for cluster_key, upgrade in nutanix_lcm_upgrade_v2.cluster_upgrade :
     cluster_key => {
-      cluster_name = var.clusters[cluster_key].name
+      cluster_name = var.prism_element[cluster_key].name
       cluster_id   = upgrade.x_cluster_id
     }
   }
@@ -52,12 +52,12 @@ output "upgrade_operations" {
 output "summary" {
   description = "Summary of LCM operations across all clusters"
   value = {
-    total_clusters     = length(var.clusters)
+    total_clusters     = length(var.prism_element)
     inventory_clusters = length(local.inventory_clusters)
     precheck_clusters  = length(local.precheck_clusters)
     upgrade_clusters   = length(local.upgrade_clusters)
     non_ahv_clusters   = local.non_ahv_clusters
-    darksite_clusters  = [for k, v in var.clusters : v.name if v.connectivity_type == "DARKSITE_WEB_SERVER"]
+    darksite_clusters  = [for k, v in var.prism_element : v.name if v.connectivity_type == "DARKSITE_WEB_SERVER"]
   }
 }
 
@@ -83,7 +83,7 @@ output "prism_central_entities_to_upgrade" {
 
 output "cluster_entities_to_upgrade" {
   description = "Configured entities to upgrade for each cluster"
-  value       = { for k, v in var.clusters : k => v.entities_to_upgrade }
+  value       = { for k, v in var.prism_element : k => v.entities_to_upgrade }
 }
 
 output "prism_central_matching_entities" {
@@ -116,7 +116,7 @@ output "entities_summary" {
       will_run_upgrade   = var.prism_central.perform_upgrade && length(local.prism_central_entities_with_updates) > 0
     }
     clusters = {
-      for k, v in var.clusters : k => {
+      for k, v in var.prism_element : k => {
         configured_count   = length(local.cluster_matching_entities[k])
         with_updates_count = length(local.cluster_entities_with_updates[k])
         will_run_prechecks = v.perform_prechecks && length(local.cluster_entities_with_updates[k]) > 0
@@ -124,4 +124,19 @@ output "entities_summary" {
       }
     }
   }
+}
+
+output "prism_central_entity_versions_after_upgrade" {
+  description = "Prism Central entity versions after upgrade"
+  value       = data.nutanix_lcm_entity_v2.prism_central_entities_after_upgrade
+}
+
+output "cluster_lcm_status_after_upgrade" {
+  description = "LCM status after upgrade for each cluster"
+  value       = data.nutanix_lcm_status_v2.cluster_status_after_upgrade
+}
+
+output "missing_cluster_validation" {
+  description = "Validation data for missing clusters (triggers precondition check)"
+  value       = data.local_file.missing_cluster_check.content
 }

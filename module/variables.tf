@@ -1,5 +1,5 @@
 # Variable for per-cluster LCM actions and configurations.
-variable "clusters" {
+variable "prism_element" {
   description = "A optional map of Nutanix cluster configurations for LCM actions."
   type = map(object({
     # General & Actions
@@ -73,7 +73,7 @@ variable "clusters" {
   # Always need at least one entity to upgrade
   validation {
     condition = alltrue([
-      for k, v in var.clusters :
+      for k, v in var.prism_element :
       v.perform_upgrade ? (length(v.entities_to_upgrade) > 0) : true
     ])
     error_message = "At least one entity must be specified in 'entities_to_upgrade' when 'perform_upgrade' is true."
@@ -81,7 +81,7 @@ variable "clusters" {
 
   validation {
     condition = alltrue([
-      for k, v in var.clusters :
+      for k, v in var.prism_element :
       v.management_server != null ? (
         v.management_server.ip != null &&
         v.management_server.username != null &&
@@ -94,7 +94,7 @@ variable "clusters" {
 
   validation {
     condition = alltrue([
-      for k, v in var.clusters :
+      for k, v in var.prism_element :
       contains(["INTERNET", "DARKSITE_WEB_SERVER"], v.connectivity_type)
     ])
     error_message = "Cluster LCM config 'connectivity_type' must be one of 'INTERNET' or 'DARKSITE_WEB_SERVER'."
@@ -102,7 +102,7 @@ variable "clusters" {
 
   validation {
     condition = alltrue([
-      for k, v in var.clusters :
+      for k, v in var.prism_element :
       v.connectivity_type == "DARKSITE_WEB_SERVER" ? v.darksite_url != null : true
     ])
     error_message = "Cluster LCM config 'darksite_url' must be provided when 'connectivity_type' is 'DARKSITE_WEB_SERVER'."
@@ -111,7 +111,7 @@ variable "clusters" {
   # An inventory must be performed if prechecks or upgrade is being performed.
   validation {
     condition = alltrue([
-      for k, v in var.clusters :
+      for k, v in var.prism_element :
       v.perform_prechecks || v.perform_upgrade ? v.perform_inventory : true
     ])
     error_message = "If 'perform_prechecks' or 'perform_upgrade' is true for a cluster, 'perform_inventory' must also be true."

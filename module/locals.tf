@@ -3,7 +3,7 @@ locals {
   prism_central_id = data.nutanix_clusters_v2.prism_central.cluster_entities[0].ext_id
 
   # Cluster names.
-  cluster_names = [for k, v in var.clusters : v.name]
+  cluster_names = [for k, v in var.prism_element : v.name]
 
   # Non-AHV clusters - using correct v2 API structure
   non_ahv_clusters = [
@@ -20,22 +20,22 @@ locals {
   ]
 
   # Filter to only contain clusters that actually exist.
-  existing_clusters = { for k, v in var.clusters : k => v if contains(keys(local.cluster_data_map), v.name) }
+  existing_clusters = { for k, v in var.prism_element : k => v if contains(keys(local.cluster_data_map), v.name) }
 
   # DarkSite clusters without a URL.
   darksite_clusters_without_url = [
-    for k, v in var.clusters :
+    for k, v in var.prism_element :
     v.name if v.connectivity_type == "DARKSITE_WEB_SERVER" && (v.darksite_url == null || v.darksite_url == "")
   ]
 
   # Filter for clusters where inventory should be performed
-  inventory_clusters = { for k, v in var.clusters : k => v if v.perform_inventory }
+  inventory_clusters = { for k, v in var.prism_element : k => v if v.perform_inventory }
 
   # Filter for clusters where pre-checks should be performed
-  precheck_clusters = { for k, v in var.clusters : k => v if v.perform_prechecks }
+  precheck_clusters = { for k, v in var.prism_element : k => v if v.perform_prechecks }
 
   # Filter for clusters where an upgrade should be performed
-  upgrade_clusters = { for k, v in var.clusters : k => v if v.perform_upgrade }
+  upgrade_clusters = { for k, v in var.prism_element : k => v if v.perform_upgrade }
 
   # Create a map of cluster names to their cluster entities for easy lookup
   # Based on nutanix_clusters_v2 structure - cluster data is in cluster_entities[0]
@@ -71,7 +71,7 @@ locals {
     k => [
       for ent in ents.entities :
       ent
-      if ent.cluster_ext_id == local.cluster_data_map[k].ext_id && contains(keys(var.clusters[k].entities_to_upgrade), ent.entity_model)
+      if ent.cluster_ext_id == local.cluster_data_map[k].ext_id && contains(keys(var.prism_element[k].entities_to_upgrade), ent.entity_model)
     ]
   }
 
