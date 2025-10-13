@@ -17,14 +17,32 @@ mock_provider "nutanix" {
           expand                   = ""
           inefficient_vm_count     = 0
           links                    = []
-          network                  = {}
+          network                  = []
           nodes                    = []
           tenant_id                = ""
           upgrade_status           = ""
           vm_count                 = 0
           config = [
             {
-              hypervisor_types = ["AHV"]
+              authorized_public_key_list       = []
+              build_info                       = []
+              cluster_arch                     = ""
+              cluster_function                 = ["PRISM_CENTRAL"]
+              cluster_software_map             = []
+              encryption_in_transit_status     = ""
+              encryption_option                = []
+              encryption_scope                 = []
+              fault_tolerance_state            = []
+              hypervisor_types                 = ["AHV"]
+              incarnation_id                   = 0
+              is_available                     = true
+              is_lts                           = false
+              is_password_remote_login_enabled = false
+              is_remote_support_enabled        = false
+              operation_mode                   = ""
+              pulse_status                     = []
+              redundancy_factor                = 2
+              timezone                         = ""
             }
           ]
         }
@@ -65,8 +83,7 @@ mock_provider "nutanix" {
 mock_provider "local" {
   mock_data "local_file" {
     defaults = {
-      content  = ""
-      filename = "/dev/null"
+      content = ""
     }
   }
 }
@@ -80,7 +97,7 @@ run "cluster_darksite_requires_url" {
   command = plan
 
   variables {
-    clusters = {
+    prism_element = {
       "darksite_cluster" = {
         name              = "darksite-cluster"
         connectivity_type = "DARKSITE_WEB_SERVER"
@@ -100,7 +117,7 @@ run "cluster_invalid_connectivity_type" {
   command = plan
 
   variables {
-    clusters = {
+    prism_element = {
       "test_cluster" = {
         name              = "test-cluster"
         connectivity_type = "INVALID_TYPE" # Should only be INTERNET or DARKSITE_WEB_SERVER
@@ -119,7 +136,7 @@ run "cluster_prechecks_requires_inventory" {
   command = plan
 
   variables {
-    clusters = {
+    prism_element = {
       "test_cluster" = {
         name              = "test-cluster"
         perform_inventory = false
@@ -139,7 +156,7 @@ run "cluster_upgrade_requires_inventory" {
   command = plan
 
   variables {
-    clusters = {
+    prism_element = {
       "test_cluster" = {
         name              = "test-cluster"
         perform_inventory = false
@@ -159,7 +176,7 @@ run "cluster_upgrade_requires_entities" {
   command = plan
 
   variables {
-    clusters = {
+    prism_element = {
       "test_cluster" = {
         name                = "test-cluster"
         perform_inventory   = true
@@ -180,7 +197,7 @@ run "cluster_incomplete_management_server" {
   command = plan
 
   variables {
-    clusters = {
+    prism_element = {
       "test_cluster" = {
         name = "test-cluster"
         management_server = {
@@ -208,10 +225,10 @@ run "prism_central_darksite_requires_url" {
   command = plan
 
   variables {
-    clusters = {}
+    prism_element = {}
     prism_central = {
       connectivity_type = "DARKSITE_WEB_SERVER"
-      darksite_url      = null # This should fail validation
+      darksite_url      = null # Invalid: DarkSite requires URL
     }
   }
 
@@ -241,7 +258,7 @@ run "prism_central_prechecks_requires_inventory" {
   command = plan
 
   variables {
-    clusters = {}
+    prism_element = {}
     prism_central = {
       perform_inventory = false
       perform_prechecks = true # This should fail - prechecks requires inventory
@@ -258,7 +275,7 @@ run "prism_central_upgrade_requires_inventory" {
   command = plan
 
   variables {
-    clusters = {}
+    prism_element = {}
     prism_central = {
       perform_inventory = false
       perform_upgrade   = true # This should fail - upgrade requires inventory
@@ -275,7 +292,7 @@ run "prism_central_upgrade_requires_entities" {
   command = plan
 
   variables {
-    clusters = {}
+    prism_element = {}
     prism_central = {
       perform_inventory   = true
       perform_upgrade     = true
@@ -297,7 +314,7 @@ run "empty_configuration_valid" {
   command = plan
 
   variables {
-    clusters      = {}
+    prism_element = {}
     prism_central = {}
   }
 
@@ -327,8 +344,8 @@ run "valid_darksite_cluster" {
   command = plan
 
   variables {
-    clusters = {
-      "darksite_cluster" = {
+    prism_element = {
+      "darksite-cluster" = {
         name              = "darksite-cluster"
         connectivity_type = "DARKSITE_WEB_SERVER"
         darksite_url      = "https://darksite.example.com/lcm"
@@ -354,8 +371,8 @@ run "valid_cluster_upgrade" {
   command = plan
 
   variables {
-    clusters = {
-      "upgrade_cluster" = {
+    prism_element = {
+      "upgrade-cluster" = {
         name              = "upgrade-cluster"
         perform_inventory = true
         perform_prechecks = true
@@ -382,8 +399,8 @@ run "valid_cluster_upgrade" {
   }
 
   assert {
-    condition     = output.cluster_entities_to_upgrade["upgrade_cluster"]["AOS"].target_version == "7.0.1.7"
-    error_message = "Expected AOS target version 7.0.1.7"
+    condition     = output.cluster_entities_to_upgrade["upgrade-cluster"]["AOS"].target_version == "7.0.1.7"
+    error_message = "Expected AOS target version to be 7.0.1.7"
   }
 }
 
@@ -392,7 +409,7 @@ run "valid_prism_central_upgrade" {
   command = plan
 
   variables {
-    clusters = {}
+    prism_element = {}
     prism_central = {
       perform_inventory = true
       perform_prechecks = true
@@ -426,8 +443,8 @@ run "valid_management_server" {
   command = plan
 
   variables {
-    clusters = {
-      "esxi_cluster" = {
+    prism_element = {
+      "esxi-cluster" = {
         name = "esxi-cluster"
         management_server = {
           hypervisor_type = "ESXi"
@@ -451,19 +468,19 @@ run "multiple_clusters_valid" {
   command = plan
 
   variables {
-    clusters = {
-      "internet_cluster" = {
+    prism_element = {
+      "internet-cluster" = {
         name              = "internet-cluster"
         connectivity_type = "INTERNET"
         perform_inventory = true
       }
-      "darksite_cluster" = {
+      "darksite-cluster" = {
         name              = "darksite-cluster"
         connectivity_type = "DARKSITE_WEB_SERVER"
         darksite_url      = "https://darksite.example.com"
         perform_inventory = false
       }
-      "upgrade_cluster" = {
+      "upgrade-cluster" = {
         name              = "upgrade-cluster"
         perform_inventory = true
         perform_upgrade   = true
@@ -491,12 +508,12 @@ run "multiple_clusters_valid" {
   }
 
   assert {
-    condition     = output.summary.upgrade_clusters == 1
-    error_message = "Expected 1 upgrade cluster"
+    condition     = length(output.summary.darksite_clusters) == 1
+    error_message = "Expected 1 darksite cluster"
   }
 
   assert {
-    condition     = length(output.summary.darksite_clusters) == 1
-    error_message = "Expected 1 darksite cluster"
+    condition     = output.cluster_entities_to_upgrade["upgrade-cluster"]["AOS"].target_version == "latest"
+    error_message = "Expected AOS target version latest"
   }
 }

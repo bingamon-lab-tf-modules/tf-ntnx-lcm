@@ -5,6 +5,9 @@ locals {
   # Cluster names.
   cluster_names = [for k, v in var.prism_element : v.name]
 
+  # Map cluster names to var.prism_element keys
+  cluster_name_to_key = { for k, v in var.prism_element : v.name => k }
+
   # Non-AHV clusters - using correct v2 API structure
   non_ahv_clusters = [
     for cluster_name, cluster_data in data.nutanix_clusters_v2.clusters :
@@ -65,13 +68,13 @@ locals {
     if length(entity.available_versions) > 0
   ]
 
-  # Matching entities for each Prism Central that are configured for upgrade
+  # Matching entities for each Prism Element cluster that are configured for upgrade
   cluster_matching_entities = {
-    for k, ents in data.nutanix_lcm_entities_v2.cluster_lcm_entities :
-    k => [
+    for cluster_name, ents in data.nutanix_lcm_entities_v2.cluster_lcm_entities :
+    local.cluster_name_to_key[cluster_name] => [
       for ent in ents.entities :
       ent
-      if ent.cluster_ext_id == local.cluster_data_map[k].ext_id && contains(keys(var.prism_element[k].entities_to_upgrade), ent.entity_model)
+      if ent.cluster_ext_id == local.cluster_data_map[cluster_name].ext_id && contains(keys(var.prism_element[local.cluster_name_to_key[cluster_name]].entities_to_upgrade), ent.entity_model)
     ]
   }
 

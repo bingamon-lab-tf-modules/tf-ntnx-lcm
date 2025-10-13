@@ -27,14 +27,32 @@ mock_provider "nutanix" {
           expand                   = ""
           inefficient_vm_count     = 0
           links                    = []
-          network                  = {}
+          network                  = []
           nodes                    = []
           tenant_id                = ""
           upgrade_status           = ""
           vm_count                 = 0
           config = [
             {
-              hypervisor_types = ["AHV"]
+              authorized_public_key_list       = []
+              build_info                       = []
+              cluster_arch                     = ""
+              cluster_function                 = ["PRISM_CENTRAL"]
+              cluster_software_map             = []
+              encryption_in_transit_status     = ""
+              encryption_option                = []
+              encryption_scope                 = []
+              fault_tolerance_state            = []
+              hypervisor_types                 = ["AHV"]
+              incarnation_id                   = 0
+              is_available                     = true
+              is_lts                           = false
+              is_password_remote_login_enabled = false
+              is_remote_support_enabled        = false
+              operation_mode                   = ""
+              pulse_status                     = []
+              redundancy_factor                = 2
+              timezone                         = ""
             }
           ]
         }
@@ -69,12 +87,12 @@ mock_provider "nutanix" {
       ]
     }
   }
+}
 
-  # Mock local file for cluster validation
+mock_provider "local" {
   mock_data "local_file" {
     defaults = {
-      content  = ""
-      filename = "/dev/null"
+      content = ""
     }
   }
 }
@@ -84,7 +102,7 @@ run "empty_config" {
   command = plan
 
   variables {
-    clusters      = {}
+    prism_element = {}
     prism_central = {}
   }
 
@@ -99,7 +117,7 @@ run "darksite_without_url" {
   command = plan
 
   variables {
-    clusters = {
+    prism_element = {
       "test" = {
         name              = "test"
         connectivity_type = "DARKSITE_WEB_SERVER"
@@ -117,7 +135,7 @@ run "prechecks_without_inventory" {
   command = plan
 
   variables {
-    clusters = {
+    prism_element = {
       "test" = {
         name              = "test"
         perform_inventory = false
@@ -135,7 +153,7 @@ run "upgrade_without_inventory" {
   command = plan
 
   variables {
-    clusters = {
+    prism_element = {
       "test" = {
         name              = "test"
         perform_inventory = false
@@ -153,7 +171,7 @@ run "invalid_connectivity_type" {
   command = plan
 
   variables {
-    clusters = {
+    prism_element = {
       "test" = {
         name              = "test"
         connectivity_type = "INVALID"
@@ -170,7 +188,7 @@ run "valid_darksite" {
   command = plan
 
   variables {
-    clusters = {
+    prism_element = {
       "test" = {
         name              = "test"
         connectivity_type = "DARKSITE_WEB_SERVER"
@@ -191,7 +209,7 @@ run "valid_upgrade" {
   command = plan
 
   variables {
-    clusters = {
+    prism_element = {
       "test" = {
         name              = "test"
         perform_inventory = true
@@ -213,7 +231,7 @@ run "pc_darksite_without_url" {
   command = plan
 
   variables {
-    clusters = {}
+    prism_element = {}
     prism_central = {
       connectivity_type = "DARKSITE_WEB_SERVER"
       darksite_url      = null
@@ -228,7 +246,7 @@ run "pc_prechecks_without_inventory" {
   command = plan
 
   variables {
-    clusters = {}
+    prism_element = {}
     prism_central = {
       perform_inventory = false
       perform_prechecks = true
@@ -243,7 +261,7 @@ run "valid_prism_central" {
   command = plan
 
   variables {
-    clusters = {}
+    prism_element = {}
     prism_central = {
       perform_inventory = true
       perform_prechecks = true

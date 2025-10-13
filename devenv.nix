@@ -280,6 +280,7 @@ in
         tofu-format "''${MODULE_HOME}" || exit 1
         tofu-init "''${MODULE_HOME}" || exit 1
         tofu-validate "''${MODULE_HOME}" || exit 1
+        tofu-test "''${MODULE_HOME}" || exit 1
         tofu-docs "''${MODULE_HOME}" || exit 1
         tflint --format=compact --chdir="''${MODULE_HOME}" || exit 1
       '';
@@ -354,6 +355,31 @@ in
         pushd "''${DIR}"
         tofu validate || {
           echo "Failed to validate OpenTofu code in ''${DIR}"
+          exit 1
+        }
+        popd
+      '';
+    };
+
+    tofu-test = {
+      package = pkgs.bash;
+      description = "Run OpenTofu tests in a given directory";
+      exec = ''
+        DIR="''${1:-}"
+        if [ "''${DIR:-EMPTY}" == "EMPTY" ];
+        then
+          echo "Usage: $0 <directory>"
+          exit 1
+        fi
+        if [ ! -d "''${DIR}" ];
+        then
+          echo "Directory ''${DIR} does not exist"
+          exit 1
+        fi
+        echo "Running OpenTofu tests in ''${DIR}"
+        pushd "''${DIR}"
+        tofu test -verbose || {
+          echo "Failed to run OpenTofu tests in ''${DIR}"
           exit 1
         }
         popd
