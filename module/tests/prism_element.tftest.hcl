@@ -10,7 +10,7 @@ run "cluster_darksite_requires_url" {
       "test_cluster" = {
         name              = "test-cluster"
         connectivity_type = "DARKSITE_WEB_SERVER"
-        darksite_url      = null  # Invalid: DarkSite requires URL
+        darksite_url      = null # Invalid: DarkSite requires URL
       }
     }
     prism_central = {}
@@ -27,7 +27,7 @@ run "cluster_prechecks_requires_inventory" {
     clusters = {
       "test_cluster" = {
         name              = "test-cluster"
-        perform_inventory = false  # Invalid: prechecks requires inventory
+        perform_inventory = false # Invalid: prechecks requires inventory
         perform_prechecks = true
       }
     }
@@ -45,7 +45,7 @@ run "cluster_upgrade_requires_inventory" {
     clusters = {
       "test_cluster" = {
         name              = "test-cluster"
-        perform_inventory = false  # Invalid: upgrade requires inventory
+        perform_inventory = false # Invalid: upgrade requires inventory
         perform_upgrade   = true
       }
     }
@@ -63,7 +63,7 @@ run "cluster_invalid_connectivity_type" {
     clusters = {
       "test_cluster" = {
         name              = "test-cluster"
-        connectivity_type = "INVALID_TYPE"  # Invalid: must be INTERNET or DARKSITE_WEB_SERVER
+        connectivity_type = "INVALID_TYPE" # Invalid: must be INTERNET or DARKSITE_WEB_SERVER
       }
     }
     prism_central = {}
@@ -84,7 +84,7 @@ run "cluster_management_server_incomplete" {
           hypervisor_type = "ESXi"
           ip              = "192.168.1.1"
           username        = "admin"
-          password        = null  # Invalid: all fields required
+          password        = null # Invalid: all fields required
         }
       }
     }
@@ -102,7 +102,7 @@ run "prism_central_darksite_requires_url" {
     clusters = {}
     prism_central = {
       connectivity_type = "DARKSITE_WEB_SERVER"
-      darksite_url      = null  # Invalid: DarkSite requires URL
+      darksite_url      = null # Invalid: DarkSite requires URL
     }
   }
 
@@ -116,7 +116,7 @@ run "prism_central_prechecks_requires_inventory" {
   variables {
     clusters = {}
     prism_central = {
-      perform_inventory = false  # Invalid: prechecks requires inventory
+      perform_inventory = false # Invalid: prechecks requires inventory
       perform_prechecks = true
     }
   }
@@ -131,7 +131,7 @@ run "prism_central_upgrade_requires_inventory" {
   variables {
     clusters = {}
     prism_central = {
-      perform_inventory = false  # Invalid: upgrade requires inventory
+      perform_inventory = false # Invalid: upgrade requires inventory
       perform_upgrade   = true
     }
   }
@@ -146,7 +146,7 @@ run "prism_central_invalid_connectivity_type" {
   variables {
     clusters = {}
     prism_central = {
-      connectivity_type = "INVALID_TYPE"  # Invalid: must be INTERNET or DARKSITE_WEB_SERVER
+      connectivity_type = "INVALID_TYPE" # Invalid: must be INTERNET or DARKSITE_WEB_SERVER
     }
   }
 
@@ -164,7 +164,7 @@ run "valid_minimal_config" {
       "test_cluster" = {
         name              = "test-cluster"
         connectivity_type = "INTERNET"
-        perform_inventory = false  # Not performing any actions
+        perform_inventory = false # Not performing any actions
       }
     }
     prism_central = {

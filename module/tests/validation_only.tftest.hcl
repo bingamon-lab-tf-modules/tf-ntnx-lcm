@@ -84,14 +84,14 @@ run "cluster_darksite_requires_url" {
       "darksite_cluster" = {
         name              = "darksite-cluster"
         connectivity_type = "DARKSITE_WEB_SERVER"
-        darksite_url      = null  # This should fail validation
+        darksite_url      = null # This should fail validation
       }
     }
     prism_central = {}
   }
 
   expect_failures = [
-    var.prism_element,  # Expect variable validation to fail
+    var.prism_element, # Expect variable validation to fail
   ]
 }
 
@@ -103,7 +103,7 @@ run "cluster_invalid_connectivity_type" {
     clusters = {
       "test_cluster" = {
         name              = "test-cluster"
-        connectivity_type = "INVALID_TYPE"  # Should only be INTERNET or DARKSITE_WEB_SERVER
+        connectivity_type = "INVALID_TYPE" # Should only be INTERNET or DARKSITE_WEB_SERVER
       }
     }
     prism_central = {}
@@ -123,7 +123,7 @@ run "cluster_prechecks_requires_inventory" {
       "test_cluster" = {
         name              = "test-cluster"
         perform_inventory = false
-        perform_prechecks = true  # This should fail - prechecks requires inventory
+        perform_prechecks = true # This should fail - prechecks requires inventory
       }
     }
     prism_central = {}
@@ -143,7 +143,7 @@ run "cluster_upgrade_requires_inventory" {
       "test_cluster" = {
         name              = "test-cluster"
         perform_inventory = false
-        perform_upgrade   = true  # This should fail - upgrade requires inventory
+        perform_upgrade   = true # This should fail - upgrade requires inventory
       }
     }
     prism_central = {}
@@ -164,7 +164,7 @@ run "cluster_upgrade_requires_entities" {
         name                = "test-cluster"
         perform_inventory   = true
         perform_upgrade     = true
-        entities_to_upgrade = {}  # This should fail - need at least one entity
+        entities_to_upgrade = {} # This should fail - need at least one entity
       }
     }
     prism_central = {}
@@ -186,7 +186,7 @@ run "cluster_incomplete_management_server" {
         management_server = {
           hypervisor_type = "ESXi"
           ip              = "192.168.1.1"
-          username        = null  # This should fail - all fields required
+          username        = null # This should fail - all fields required
           password        = "password"
         }
       }
@@ -211,7 +211,7 @@ run "prism_central_darksite_requires_url" {
     clusters = {}
     prism_central = {
       connectivity_type = "DARKSITE_WEB_SERVER"
-      darksite_url      = null  # This should fail validation
+      darksite_url      = null # This should fail validation
     }
   }
 
@@ -227,7 +227,7 @@ run "prism_central_invalid_connectivity_type" {
   variables {
     clusters = {}
     prism_central = {
-      connectivity_type = "INVALID_TYPE"  # Should only be INTERNET or DARKSITE_WEB_SERVER
+      connectivity_type = "INVALID_TYPE" # Should only be INTERNET or DARKSITE_WEB_SERVER
     }
   }
 
@@ -244,7 +244,7 @@ run "prism_central_prechecks_requires_inventory" {
     clusters = {}
     prism_central = {
       perform_inventory = false
-      perform_prechecks = true  # This should fail - prechecks requires inventory
+      perform_prechecks = true # This should fail - prechecks requires inventory
     }
   }
 
@@ -261,7 +261,7 @@ run "prism_central_upgrade_requires_inventory" {
     clusters = {}
     prism_central = {
       perform_inventory = false
-      perform_upgrade   = true  # This should fail - upgrade requires inventory
+      perform_upgrade   = true # This should fail - upgrade requires inventory
     }
   }
 
@@ -279,7 +279,7 @@ run "prism_central_upgrade_requires_entities" {
     prism_central = {
       perform_inventory   = true
       perform_upgrade     = true
-      entities_to_upgrade = {}  # This should fail - need at least one entity
+      entities_to_upgrade = {} # This should fail - need at least one entity
     }
   }
 

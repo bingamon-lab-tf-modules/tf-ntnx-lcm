@@ -8,20 +8,20 @@ mock_provider "nutanix" {
     defaults = {
       # Provide complete cluster_entities structure as required by schema
       cluster_entities = [{
-        ext_id                      = "00000000-0000-0000-0000-000000000000"
-        name                        = "mock-prism-central"
-        backup_eligibility_score    = 100
-        categories                  = []
-        cluster_profile_ext_id      = "mock-profile-id"
-        container_name              = "mock-container"
-        expand                      = ""
-        inefficient_vm_count        = 0
-        links                       = []
-        network                     = {}
-        nodes                       = []
-        tenant_id                   = "mock-tenant"
-        upgrade_status              = "NONE"
-        vm_count                    = 0
+        ext_id                   = "00000000-0000-0000-0000-000000000000"
+        name                     = "mock-prism-central"
+        backup_eligibility_score = 100
+        categories               = []
+        cluster_profile_ext_id   = "mock-profile-id"
+        container_name           = "mock-container"
+        expand                   = ""
+        inefficient_vm_count     = 0
+        links                    = []
+        network                  = {}
+        nodes                    = []
+        tenant_id                = "mock-tenant"
+        upgrade_status           = "NONE"
+        vm_count                 = 0
         config = [{
           hypervisor_types = ["AHV"]
           cluster_function = ["PRISM_CENTRAL"]
@@ -100,7 +100,7 @@ run "cluster_darksite_requires_url" {
       "test_cluster" = {
         name              = "test-cluster"
         connectivity_type = "DARKSITE_WEB_SERVER"
-        darksite_url      = null  # Invalid: should fail validation
+        darksite_url      = null # Invalid: should fail validation
       }
     }
     prism_central = {}
@@ -118,7 +118,7 @@ run "cluster_prechecks_requires_inventory" {
       "test_cluster" = {
         name              = "test-cluster"
         perform_inventory = false
-        perform_prechecks = true  # Invalid: requires inventory
+        perform_prechecks = true # Invalid: requires inventory
       }
     }
     prism_central = {}
@@ -136,7 +136,7 @@ run "cluster_upgrade_requires_inventory" {
       "test_cluster" = {
         name              = "test-cluster"
         perform_inventory = false
-        perform_upgrade   = true  # Invalid: requires inventory
+        perform_upgrade   = true # Invalid: requires inventory
       }
     }
     prism_central = {}
@@ -153,7 +153,7 @@ run "cluster_invalid_connectivity_type" {
     clusters = {
       "test_cluster" = {
         name              = "test-cluster"
-        connectivity_type = "INVALID"  # Invalid: must be INTERNET or DARKSITE_WEB_SERVER
+        connectivity_type = "INVALID" # Invalid: must be INTERNET or DARKSITE_WEB_SERVER
       }
     }
     prism_central = {}
@@ -174,7 +174,7 @@ run "cluster_management_server_incomplete" {
           hypervisor_type = "ESXi"
           ip              = "192.168.1.1"
           username        = "admin"
-          password        = null  # Invalid: all fields required
+          password        = null # Invalid: all fields required
         }
       }
     }
@@ -194,7 +194,7 @@ run "cluster_upgrade_needs_entities" {
         name                = "test-cluster"
         perform_inventory   = true
         perform_upgrade     = true
-        entities_to_upgrade = {}  # Invalid: needs at least one entity
+        entities_to_upgrade = {} # Invalid: needs at least one entity
       }
     }
     prism_central = {}
@@ -211,7 +211,7 @@ run "prism_central_darksite_requires_url" {
     clusters = {}
     prism_central = {
       connectivity_type = "DARKSITE_WEB_SERVER"
-      darksite_url      = null  # Invalid: should fail validation
+      darksite_url      = null # Invalid: should fail validation
     }
   }
 
@@ -226,7 +226,7 @@ run "prism_central_prechecks_requires_inventory" {
     clusters = {}
     prism_central = {
       perform_inventory = false
-      perform_prechecks = true  # Invalid: requires inventory
+      perform_prechecks = true # Invalid: requires inventory
     }
   }
 
@@ -241,7 +241,7 @@ run "prism_central_upgrade_requires_inventory" {
     clusters = {}
     prism_central = {
       perform_inventory = false
-      perform_upgrade   = true  # Invalid: requires inventory
+      perform_upgrade   = true # Invalid: requires inventory
     }
   }
 
@@ -257,7 +257,7 @@ run "prism_central_upgrade_needs_entities" {
     prism_central = {
       perform_inventory   = true
       perform_upgrade     = true
-      entities_to_upgrade = {}  # Invalid: needs at least one entity
+      entities_to_upgrade = {} # Invalid: needs at least one entity
     }
   }
 
