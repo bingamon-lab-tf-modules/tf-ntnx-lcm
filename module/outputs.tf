@@ -113,12 +113,12 @@ output "prism_element_upgrade_operations" {
 output "prism_element_summary" {
   description = "Summary of LCM operations across all Prism Element clusters"
   value = {
-    total_prism_element_clusters = length(var.prism_element)
-    inventory_clusters           = length(local.prism_element_inventory_clusters)
-    precheck_clusters            = length(local.prism_element_precheck_clusters)
-    upgrade_clusters             = length(local.prism_element_upgrade_clusters)
-    non_ahv_clusters             = local.prism_element_non_ahv_clusters
-    darksite_clusters            = [for k, v in var.prism_element : v.name if v.connectivity_type == "DARKSITE_WEB_SERVER"]
+    total_clusters     = length(var.prism_element)
+    inventory_clusters = length(local.prism_element_inventory_clusters)
+    precheck_clusters  = length(local.prism_element_precheck_clusters)
+    upgrade_clusters   = length(local.prism_element_upgrade_clusters)
+    non_ahv_clusters   = local.prism_element_non_ahv_clusters
+    darksite_clusters  = [for k, v in var.prism_element : v.name if v.connectivity_type == "DARKSITE_WEB_SERVER"]
   }
 }
 

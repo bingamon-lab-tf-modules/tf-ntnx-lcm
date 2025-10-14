@@ -238,3 +238,19 @@ run "prism_central_valid_upgrade" {
     error_message = "Expected PC entity"
   }
 }
+
+# Test 8: Prism Central upgrade needs entities
+run "prism_central_upgrade_needs_entities" {
+  command = plan
+
+  variables {
+    prism_element = {}
+    prism_central = {
+      perform_inventory   = true
+      perform_upgrade     = true
+      entities_to_upgrade = {} # Invalid: needs at least one entity
+    }
+  }
+
+  expect_failures = [var.prism_central]
+}

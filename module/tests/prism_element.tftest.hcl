@@ -125,7 +125,7 @@ run "prism_element_empty_config" {
   }
 
   assert {
-    condition     = output.prism_element_summary.total_prism_element_clusters == 0
+    condition     = output.prism_element_summary.total_clusters == 0
     error_message = "Expected 0 Prism Element Clusters"
   }
 }
@@ -217,7 +217,7 @@ run "prism_element_valid_darksite" {
   }
 
   assert {
-    condition     = output.prism_element_summary.total_prism_element_clusters == 1
+    condition     = output.prism_element_summary.total_clusters == 1
     error_message = "Expected 1 cluster"
   }
 }
@@ -241,5 +241,96 @@ run "prism_element_valid_upgrade" {
   assert {
     condition     = output.prism_element_summary.upgrade_clusters == 1
     error_message = "Expected 1 upgrade cluster"
+  }
+}
+
+# Test 8: Validate management server requires all fields
+run "prism_element_cluster_management_server_incomplete" {
+  command = plan
+
+  variables {
+    prism_element = {
+      "test" = {
+        name = "test"
+        management_server = {
+          hypervisor_type = "ESXi"
+          ip              = "192.168.1.1"
+          username        = "admin"
+          password        = null
+        }
+      }
+    }
+    prism_central = {}
+  }
+
+  expect_failures = [var.prism_element]
+}
+
+# Test 9: Validate at least one entity required for upgrade
+run "prism_element_cluster_upgrade_needs_entities" {
+  command = plan
+
+  variables {
+    prism_element = {
+      "test" = {
+        name                = "test"
+        perform_inventory   = true
+        perform_upgrade     = true
+        entities_to_upgrade = {} # Invalid: needs at least one entity
+      }
+    }
+    prism_central = {}
+  }
+
+  expect_failures = [var.prism_element]
+}
+
+# Test 10: Multiple clusters with different configurations
+run "prism_element_multiple_clusters" {
+  command = plan
+
+  variables {
+    prism_element = {
+      "test-1" = {
+        name              = "test-1"
+        connectivity_type = "INTERNET"
+        perform_inventory = true
+      }
+      "test-2" = {
+        name              = "test-2"
+        connectivity_type = "DARKSITE_WEB_SERVER"
+        darksite_url      = "https://darksite.example.com"
+        perform_inventory = false
+      }
+      "test-3" = {
+        name              = "test-3"
+        perform_inventory = true
+        perform_upgrade   = true
+        entities_to_upgrade = {
+          "AOS" = {
+            entity_model   = "AOS"
+            target_version = "latest"
+          }
+        }
+      }
+    }
+    prism_central = {
+      connectivity_type = "INTERNET"
+    }
+  }
+
+  assert {
+    condition     = output.prism_element_summary.total_clusters == 3
+    error_message = "Expected 3 clusters"
+  }
+
+  assert {
+    condition     = output.prism_element_summary.inventory_clusters == 2
+    error_message = "Expected 2 inventory clusters"
+  }
+
+  assert {
+    condition     = length(output.prism_element_summary.darksite_clusters) == 1
+    error_message = "Expected 1 darksite cluster"
   }
 }
