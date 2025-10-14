@@ -198,7 +198,7 @@ in
         enable = true;
         name = "tofu-validate-module";
         entry = "tofu-validate-module";
-        files = "^module/.*\\.*$";
+        files = "^module/.*\\.*$"; # Run on changes to any file in the module directory
         pass_filenames = false;
       };
       tflint.enable = true;

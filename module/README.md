@@ -11,7 +11,7 @@ This module can manage two types of LCM configurations:
 1. Prism Central
 2. Prism Element
 
-Depending on which type will determine the required variables.
+Depending on which type will determine the required variables which are described below.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
