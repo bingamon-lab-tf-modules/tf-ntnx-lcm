@@ -2,18 +2,9 @@
   pkgs,
   config,
   lib,
-  inputs,
   ...
 }:
 let
-
-  pkgsUnstable = import inputs.nixpkgs-unstable {
-    config.allowUnfree = true;
-  };
-
-  packagesUnstable = with pkgsUnstable; [
-    #opentofu
-  ];
 
   packages = with pkgs; [
     bashInteractive
@@ -68,6 +59,7 @@ let
     terraform-providers.tls
     terraform-providers.vault
     tflint
+    hclfmt
     vault
   ];
 
@@ -82,9 +74,9 @@ in
   cachix = {
     enable = true;
     pull = [
-      "bingamon"
+      "bingamon-lab-tf-modules"
     ];
-    push = "bingamon";
+    push = "bingamon-lab-tf-modules";
   };
 
   devenv = {
@@ -101,9 +93,7 @@ in
   };
 
   packages =
-    packages
-    ++ packagesUnstable
-    ++ lib.optionals (!config.container.isBuilding || config.name == "devenv") devPackages;
+    packages ++ lib.optionals (!config.container.isBuilding || config.name == "devenv") devPackages;
 
   enterShell = ''
     figlet -f starwars -w 180 $PROJECT
@@ -146,12 +136,13 @@ in
     ];
     hooks = {
       actionlint.enable = true;
+      action-validator.enable = true;
       check-json.enable = true;
       check-merge-conflicts.enable = true;
       check-shebang-scripts-are-executable.enable = true;
       check-symlinks.enable = true;
       check-yaml.enable = true;
-      commitizen.enable = true;
+      commitizen.enable = false; # TODO: Enable when upstream is fixed.
       convco.enable = true;
       deadnix.enable = true;
       dialyzer.enable = true;
@@ -208,7 +199,7 @@ in
         enable = true;
         name = "tofu-validate-module";
         entry = "tofu-validate-module";
-        files = "^module/.*\\.*$";
+        files = "^module/.*$"; # Run on changes to any file in the module directory
         pass_filenames = false;
       };
       tflint.enable = true;
@@ -290,7 +281,15 @@ in
         tofu-format "''${MODULE_HOME}" || exit 1
         tofu-init "''${MODULE_HOME}" || exit 1
         tofu-validate "''${MODULE_HOME}" || exit 1
+        tofu-test "''${MODULE_HOME}" || exit 1
         tofu-docs "''${MODULE_HOME}" || exit 1
+        tflint --format=compact --chdir="''${MODULE_HOME}" || exit 1
+        # Check if any files were changed during the operations
+        if ! git diff --quiet;
+        then
+            echo "The validation hook made changes to files. Please review and stage changes before committing again."
+            exit 1
+        fi
       '';
     };
 
@@ -311,7 +310,7 @@ in
         fi
         echo "Formatting OpenTofu code in ''${DIR}"
         pushd "''${DIR}"
-        tofu fmt -write=true "''${DIR}" || {
+        tofu fmt -write=true -recursive "''${DIR}" || {
           echo "Failed to format OpenTofu code in ''${DIR}"
           exit 1
         }
@@ -363,6 +362,31 @@ in
         pushd "''${DIR}"
         tofu validate || {
           echo "Failed to validate OpenTofu code in ''${DIR}"
+          exit 1
+        }
+        popd
+      '';
+    };
+
+    tofu-test = {
+      package = pkgs.bash;
+      description = "Run OpenTofu tests in a given directory";
+      exec = ''
+        DIR="''${1:-}"
+        if [ "''${DIR:-EMPTY}" == "EMPTY" ];
+        then
+          echo "Usage: $0 <directory>"
+          exit 1
+        fi
+        if [ ! -d "''${DIR}" ];
+        then
+          echo "Directory ''${DIR} does not exist"
+          exit 1
+        fi
+        echo "Running OpenTofu tests in ''${DIR}"
+        pushd "''${DIR}"
+        tofu test -verbose || {
+          echo "Failed to run OpenTofu tests in ''${DIR}"
           exit 1
         }
         popd
