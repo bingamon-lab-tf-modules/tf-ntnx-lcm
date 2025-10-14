@@ -198,7 +198,7 @@ in
         enable = true;
         name = "tofu-validate-module";
         entry = "tofu-validate-module";
-        files = "^module/.*\\.*$"; # Run on changes to any file in the module directory
+        files = "^module/.*$"; # Run on changes to any file in the module directory
         pass_filenames = false;
       };
       tflint.enable = true;
@@ -309,7 +309,7 @@ in
         fi
         echo "Formatting OpenTofu code in ''${DIR}"
         pushd "''${DIR}"
-        tofu fmt -write=true "''${DIR}" || {
+        tofu fmt -recursive -write=true "''${DIR}" || {
           echo "Failed to format OpenTofu code in ''${DIR}"
           exit 1
         }
