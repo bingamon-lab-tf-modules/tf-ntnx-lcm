@@ -71,22 +71,22 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_cluster_entities_to_upgrade"></a> [cluster\_entities\_to\_upgrade](#output\_cluster\_entities\_to\_upgrade) | Configured entities to upgrade for each cluster |
-| <a name="output_cluster_entities_with_updates"></a> [cluster\_entities\_with\_updates](#output\_cluster\_entities\_with\_updates) | Cluster entities that have available updates |
-| <a name="output_cluster_lcm_configs"></a> [cluster\_lcm\_configs](#output\_cluster\_lcm\_configs) | LCM configuration details for each cluster |
-| <a name="output_cluster_lcm_entities"></a> [cluster\_lcm\_entities](#output\_cluster\_lcm\_entities) | Raw LCM entities data for each cluster |
-| <a name="output_cluster_lcm_status_after_upgrade"></a> [cluster\_lcm\_status\_after\_upgrade](#output\_cluster\_lcm\_status\_after\_upgrade) | LCM status after upgrade for each cluster |
-| <a name="output_cluster_matching_entities"></a> [cluster\_matching\_entities](#output\_cluster\_matching\_entities) | Cluster entities that match configuration (may not have updates) |
-| <a name="output_current_entity_versions"></a> [current\_entity\_versions](#output\_current\_entity\_versions) | Current versions of entities before upgrade |
-| <a name="output_entities_summary"></a> [entities\_summary](#output\_entities\_summary) | Summary of entities configured vs entities with updates |
-| <a name="output_inventory_operations"></a> [inventory\_operations](#output\_inventory\_operations) | Inventory operation details for each cluster |
-| <a name="output_missing_cluster_validation"></a> [missing\_cluster\_validation](#output\_missing\_cluster\_validation) | Validation data for missing clusters (triggers precondition check) |
-| <a name="output_precheck_operations"></a> [precheck\_operations](#output\_precheck\_operations) | Precheck operation details for each cluster |
+| <a name="output_lcm_current_entity_versions"></a> [lcm\_current\_entity\_versions](#output\_lcm\_current\_entity\_versions) | Current versions of entities before upgrade |
+| <a name="output_lcm_entities_summary"></a> [lcm\_entities\_summary](#output\_lcm\_entities\_summary) | Summary of entities configured vs entities with updates |
 | <a name="output_prism_central_entities_to_upgrade"></a> [prism\_central\_entities\_to\_upgrade](#output\_prism\_central\_entities\_to\_upgrade) | Configured entities to upgrade for Prism Central |
 | <a name="output_prism_central_entities_with_updates"></a> [prism\_central\_entities\_with\_updates](#output\_prism\_central\_entities\_with\_updates) | Prism Central entities that have available updates |
 | <a name="output_prism_central_entity_versions_after_upgrade"></a> [prism\_central\_entity\_versions\_after\_upgrade](#output\_prism\_central\_entity\_versions\_after\_upgrade) | Prism Central entity versions after upgrade |
 | <a name="output_prism_central_lcm_entities"></a> [prism\_central\_lcm\_entities](#output\_prism\_central\_lcm\_entities) | Raw LCM entities data for Prism Central |
 | <a name="output_prism_central_matching_entities"></a> [prism\_central\_matching\_entities](#output\_prism\_central\_matching\_entities) | Prism Central entities that match configuration (may not have updates) |
-| <a name="output_summary"></a> [summary](#output\_summary) | Summary of LCM operations across all clusters |
-| <a name="output_upgrade_operations"></a> [upgrade\_operations](#output\_upgrade\_operations) | Upgrade operation details for each cluster |
+| <a name="output_prism_element_cluster_entities_to_upgrade"></a> [prism\_element\_cluster\_entities\_to\_upgrade](#output\_prism\_element\_cluster\_entities\_to\_upgrade) | Configured entities to upgrade for each cluster |
+| <a name="output_prism_element_cluster_entities_with_updates"></a> [prism\_element\_cluster\_entities\_with\_updates](#output\_prism\_element\_cluster\_entities\_with\_updates) | Cluster entities that have available updates |
+| <a name="output_prism_element_cluster_lcm_entities"></a> [prism\_element\_cluster\_lcm\_entities](#output\_prism\_element\_cluster\_lcm\_entities) | Raw LCM entities data for each cluster |
+| <a name="output_prism_element_cluster_lcm_status_after_upgrade"></a> [prism\_element\_cluster\_lcm\_status\_after\_upgrade](#output\_prism\_element\_cluster\_lcm\_status\_after\_upgrade) | LCM status after upgrade for each cluster |
+| <a name="output_prism_element_cluster_matching_entities"></a> [prism\_element\_cluster\_matching\_entities](#output\_prism\_element\_cluster\_matching\_entities) | Cluster entities that match configuration (may not have updates) |
+| <a name="output_prism_element_inventory_operations"></a> [prism\_element\_inventory\_operations](#output\_prism\_element\_inventory\_operations) | Inventory operation details for each Prism Element cluster |
+| <a name="output_prism_element_lcm_configs"></a> [prism\_element\_lcm\_configs](#output\_prism\_element\_lcm\_configs) | LCM configuration details for each Prism Element cluster |
+| <a name="output_prism_element_missing_cluster_validation"></a> [prism\_element\_missing\_cluster\_validation](#output\_prism\_element\_missing\_cluster\_validation) | Validation data for missing clusters (triggers precondition check) |
+| <a name="output_prism_element_precheck_operations"></a> [prism\_element\_precheck\_operations](#output\_prism\_element\_precheck\_operations) | Precheck operation details for each Prism Element cluster |
+| <a name="output_prism_element_summary"></a> [prism\_element\_summary](#output\_prism\_element\_summary) | Summary of LCM operations across all Prism Element clusters |
+| <a name="output_prism_element_upgrade_operations"></a> [prism\_element\_upgrade\_operations](#output\_prism\_element\_upgrade\_operations) | Upgrade operation details for each Prism Element cluster |
 <!-- END_TF_DOCS -->

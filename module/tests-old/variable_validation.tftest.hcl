@@ -265,7 +265,7 @@ run "valid_minimal_config" {
 
   # Check basic outputs work
   assert {
-    condition     = output.summary.total_clusters == 0
+    condition     = output.summary.total_prism_element_clusters == 0
     error_message = "Expected 0 clusters"
   }
 
@@ -292,7 +292,7 @@ run "valid_darksite_cluster" {
   }
 
   assert {
-    condition     = output.summary.total_clusters == 1
+    condition     = output.summary.total_prism_element_clusters == 1
     error_message = "Expected 1 cluster"
   }
 
@@ -400,7 +400,7 @@ run "multiple_clusters" {
   }
 
   assert {
-    condition     = output.summary.total_clusters == 3
+    condition     = output.summary.total_prism_element_clusters == 3
     error_message = "Expected 3 clusters"
   }
 

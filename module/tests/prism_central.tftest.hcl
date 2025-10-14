@@ -1,7 +1,11 @@
-# Simple validation tests for tf-ntnx-lcm module
-# These tests verify variable validations work without requiring real Nutanix infrastructure
+###################################
+# Unit Tests: Prism Central
+##################################################
 
-# Configure provider with dummy values to prevent connection attempts
+#########################
+# Provider
+#########################
+
 provider "nutanix" {
   username     = "dummy"
   password     = "dummy"
@@ -11,15 +15,19 @@ provider "nutanix" {
   wait_timeout = 1
 }
 
-# Mock all provider interactions
+#########################
+# Mock Data (Nutanix Provider)
+#########################
+
 mock_provider "nutanix" {
-  # Mock the Prism Central lookup with minimal required fields
+
+  # Prism Central cluster lookup
   mock_data "nutanix_clusters_v2" {
     defaults = {
       cluster_entities = [
         {
           ext_id                   = "00000000-0000-0000-0000-000000000000"
-          name                     = "mock-pc"
+          name                     = "mock-prism-central-cluster"
           backup_eligibility_score = 0
           categories               = []
           cluster_profile_ext_id   = ""
@@ -60,14 +68,14 @@ mock_provider "nutanix" {
     }
   }
 
-  # Mock LCM entities with empty response
+  # Prism Central entities lookup (empty response)
   mock_data "nutanix_lcm_entities_v2" {
     defaults = {
       entities = []
     }
   }
 
-  # Mock LCM entity lookup
+  # Prism Central entity lookup
   mock_data "nutanix_lcm_entity_v2" {
     defaults = {
       ext_id         = "mock-id"
@@ -76,7 +84,7 @@ mock_provider "nutanix" {
     }
   }
 
-  # Mock LCM status
+  # Prism Central LCM status lookup
   mock_data "nutanix_lcm_status_v2" {
     defaults = {
       in_progress_operation = [
@@ -89,7 +97,13 @@ mock_provider "nutanix" {
   }
 }
 
+#########################
+# Mock Data (Local Provider)
+#########################
+
 mock_provider "local" {
+
+  # Local file lookup
   mock_data "local_file" {
     defaults = {
       content = ""
@@ -97,137 +111,29 @@ mock_provider "local" {
   }
 }
 
+#########################
+# Tests
+#########################
+
 # Test 1: Empty configuration should work
-run "empty_config" {
+run "prism_central_empty_config" {
   command = plan
 
   variables {
     prism_element = {}
-    prism_central = {}
+    prism_central = {
+      entities_to_upgrade = {}
+    }
   }
 
   assert {
-    condition     = output.summary.total_clusters == 0
-    error_message = "Expected 0 clusters"
+    condition     = output.lcm_entities_summary.prism_central.configured_count == 0
+    error_message = "Expected 0 Prism Central entities"
   }
 }
 
 # Test 2: DarkSite without URL should fail
-run "darksite_without_url" {
-  command = plan
-
-  variables {
-    prism_element = {
-      "test" = {
-        name              = "test"
-        connectivity_type = "DARKSITE_WEB_SERVER"
-        darksite_url      = null
-      }
-    }
-    prism_central = {}
-  }
-
-  expect_failures = [var.prism_element]
-}
-
-# Test 3: Prechecks without inventory should fail
-run "prechecks_without_inventory" {
-  command = plan
-
-  variables {
-    prism_element = {
-      "test" = {
-        name              = "test"
-        perform_inventory = false
-        perform_prechecks = true
-      }
-    }
-    prism_central = {}
-  }
-
-  expect_failures = [var.prism_element]
-}
-
-# Test 4: Upgrade without inventory should fail
-run "upgrade_without_inventory" {
-  command = plan
-
-  variables {
-    prism_element = {
-      "test" = {
-        name              = "test"
-        perform_inventory = false
-        perform_upgrade   = true
-      }
-    }
-    prism_central = {}
-  }
-
-  expect_failures = [var.prism_element]
-}
-
-# Test 5: Invalid connectivity type should fail
-run "invalid_connectivity_type" {
-  command = plan
-
-  variables {
-    prism_element = {
-      "test" = {
-        name              = "test"
-        connectivity_type = "INVALID"
-      }
-    }
-    prism_central = {}
-  }
-
-  expect_failures = [var.prism_element]
-}
-
-# Test 6: Valid DarkSite configuration
-run "valid_darksite" {
-  command = plan
-
-  variables {
-    prism_element = {
-      "test" = {
-        name              = "test"
-        connectivity_type = "DARKSITE_WEB_SERVER"
-        darksite_url      = "https://darksite.local"
-      }
-    }
-    prism_central = {}
-  }
-
-  assert {
-    condition     = output.summary.total_clusters == 1
-    error_message = "Expected 1 cluster"
-  }
-}
-
-# Test 7: Valid upgrade configuration
-run "valid_upgrade" {
-  command = plan
-
-  variables {
-    prism_element = {
-      "test" = {
-        name              = "test"
-        perform_inventory = true
-        perform_prechecks = true
-        perform_upgrade   = true
-      }
-    }
-    prism_central = {}
-  }
-
-  assert {
-    condition     = output.summary.upgrade_clusters == 1
-    error_message = "Expected 1 upgrade cluster"
-  }
-}
-
-# Test 8: Prism Central DarkSite without URL should fail
-run "pc_darksite_without_url" {
+run "prism_central_darksite_without_url" {
   command = plan
 
   variables {
@@ -235,14 +141,15 @@ run "pc_darksite_without_url" {
     prism_central = {
       connectivity_type = "DARKSITE_WEB_SERVER"
       darksite_url      = null
+      entities_to_upgrade = {}
     }
   }
 
   expect_failures = [var.prism_central]
 }
 
-# Test 9: Prism Central prechecks without inventory should fail
-run "pc_prechecks_without_inventory" {
+# Test 3: Prechecks without inventory should fail
+run "prism_central_prechecks_without_inventory" {
   command = plan
 
   variables {
@@ -250,14 +157,65 @@ run "pc_prechecks_without_inventory" {
     prism_central = {
       perform_inventory = false
       perform_prechecks = true
+      entities_to_upgrade = {}
     }
   }
 
   expect_failures = [var.prism_central]
 }
 
-# Test 10: Valid Prism Central configuration
-run "valid_prism_central" {
+# Test 4: Upgrade without inventory should fail
+run "prism_central_upgrade_without_inventory" {
+  command = plan
+
+  variables {
+    prism_element = {}
+    prism_central = {
+      perform_inventory = false
+      perform_upgrade   = true
+      entities_to_upgrade = {}
+    }
+  }
+
+  expect_failures = [var.prism_central]
+}
+
+# Test 5: Invalid connectivity type should fail
+run "prism_central_invalid_connectivity_type" {
+  command = plan
+
+  variables {
+    prism_element = {}
+    prism_central = {
+      connectivity_type = "INVALID"
+      entities_to_upgrade = {}
+    }
+  }
+
+  expect_failures = [var.prism_central]
+}
+
+# Test 6: Valid DarkSite configuration
+run "prism_central_valid_darksite" {
+  command = plan
+
+  variables {
+    prism_element = {}
+    prism_central = {
+      connectivity_type = "DARKSITE_WEB_SERVER"
+      darksite_url      = "https://darksite.local"
+      entities_to_upgrade = {}
+    }
+  }
+
+  assert {
+    condition     = output.lcm_entities_summary.prism_central.configured_count == 0
+    error_message = "Expected 0 entities for darksite"
+  }
+}
+
+# Test 7: Valid upgrade configuration
+run "prism_central_valid_upgrade" {
   command = plan
 
   variables {

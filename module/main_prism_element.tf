@@ -4,9 +4,9 @@
 
 # 1. Configure LCM settings for Prism Element
 resource "nutanix_lcm_config_v2" "cluster_lcm_settings" {
-  for_each = local.existing_clusters
+  for_each = local.prism_element_existing_clusters
 
-  x_cluster_id = local.cluster_data_map[each.value.name].ext_id
+  x_cluster_id = local.prism_element_cluster_data_map[each.value.name].ext_id
 
   connectivity_type               = each.value.connectivity_type
   url                             = each.value.darksite_url
@@ -22,9 +22,9 @@ resource "nutanix_lcm_config_v2" "cluster_lcm_settings" {
 
 # 2. Perform inventory action for Prism Element (if enabled)
 resource "nutanix_lcm_perform_inventory_v2" "cluster_inventory" {
-  for_each = { for k, v in local.existing_clusters : k => v if v.perform_inventory }
+  for_each = { for k, v in local.prism_element_existing_clusters : k => v if v.perform_inventory }
 
-  x_cluster_id = local.cluster_data_map[each.value.name].ext_id
+  x_cluster_id = local.prism_element_cluster_data_map[each.value.name].ext_id
 
   depends_on = [
     nutanix_lcm_config_v2.cluster_lcm_settings
@@ -33,12 +33,12 @@ resource "nutanix_lcm_perform_inventory_v2" "cluster_inventory" {
 
 # 3. Perform upgrade pre-checks for Prism Element (if enabled)
 resource "nutanix_lcm_prechecks_v2" "cluster_prechecks" {
-  for_each = { for k, v in local.existing_clusters : k => v if v.perform_prechecks && length(local.cluster_entities_with_updates[k]) > 0 }
+  for_each = { for k, v in local.prism_element_existing_clusters : k => v if v.perform_prechecks && length(local.prism_element_cluster_entities_with_updates[k]) > 0 }
 
-  x_cluster_id = local.cluster_data_map[each.value.name].ext_id
+  x_cluster_id = local.prism_element_cluster_data_map[each.value.name].ext_id
 
   dynamic "entity_update_specs" {
-    for_each = { for ent in local.cluster_entities_with_updates[each.key] : ent.ext_id => ent }
+    for_each = { for ent in local.prism_element_cluster_entities_with_updates[each.key] : ent.ext_id => ent }
     content {
       entity_uuid = entity_update_specs.key # The entity's UUID
       to_version = each.value.entities_to_upgrade[entity_update_specs.value.entity_model].target_version == "latest" ? (
@@ -67,16 +67,16 @@ resource "nutanix_lcm_prechecks_v2" "cluster_prechecks" {
 
 # 4. Perform upgrade action for Prism Element (if enabled)
 resource "nutanix_lcm_upgrade_v2" "cluster_upgrade" {
-  for_each = { for k, v in local.existing_clusters : k => v if v.perform_upgrade && length(local.cluster_entities_with_updates[k]) > 0 }
+  for_each = { for k, v in local.prism_element_existing_clusters : k => v if v.perform_upgrade && length(local.prism_element_cluster_entities_with_updates[k]) > 0 }
 
-  x_cluster_id = local.cluster_data_map[each.value.name].ext_id
+  x_cluster_id = local.prism_element_cluster_data_map[each.value.name].ext_id
 
   skipped_precheck_flags = each.value.skipped_precheck_flags
   auto_handle_flags      = each.value.auto_handle_flags
   max_wait_time_in_secs  = each.value.max_wait_time_in_secs
 
   dynamic "entity_update_specs" {
-    for_each = { for ent in local.cluster_entities_with_updates[each.key] : ent.ext_id => ent }
+    for_each = { for ent in local.prism_element_cluster_entities_with_updates[each.key] : ent.ext_id => ent }
     content {
       entity_uuid = entity_update_specs.key # The entity's UUID
       to_version = each.value.entities_to_upgrade[entity_update_specs.value.entity_model].target_version == "latest" ? (

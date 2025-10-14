@@ -319,7 +319,7 @@ run "empty_configuration_valid" {
   }
 
   assert {
-    condition     = output.summary.total_clusters == 0
+    condition     = output.summary.total_prism_element_clusters == 0
     error_message = "Expected 0 total clusters"
   }
 
@@ -356,7 +356,7 @@ run "valid_darksite_cluster" {
   }
 
   assert {
-    condition     = output.summary.total_clusters == 1
+    condition     = output.summary.total_prism_element_clusters == 1
     error_message = "Expected 1 total cluster"
   }
 
@@ -389,7 +389,7 @@ run "valid_cluster_upgrade" {
   }
 
   assert {
-    condition     = output.summary.total_clusters == 1
+    condition     = output.summary.total_prism_element_clusters == 1
     error_message = "Expected 1 total cluster"
   }
 
@@ -458,7 +458,7 @@ run "valid_management_server" {
   }
 
   assert {
-    condition     = output.summary.total_clusters == 1
+    condition     = output.summary.total_prism_element_clusters == 1
     error_message = "Expected 1 total cluster"
   }
 }
@@ -498,7 +498,7 @@ run "multiple_clusters_valid" {
   }
 
   assert {
-    condition     = output.summary.total_clusters == 3
+    condition     = output.summary.total_prism_element_clusters == 3
     error_message = "Expected 3 total clusters"
   }
 
