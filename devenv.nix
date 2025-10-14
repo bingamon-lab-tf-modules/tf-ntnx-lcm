@@ -59,6 +59,7 @@ let
     terraform-providers.tls
     terraform-providers.vault
     tflint
+    hclfmt
     vault
   ];
 
@@ -309,7 +310,7 @@ in
         fi
         echo "Formatting OpenTofu code in ''${DIR}"
         pushd "''${DIR}"
-        tofu fmt -recursive -write=true "''${DIR}" || {
+        tofu fmt -write=true -recursive "''${DIR}" || {
           echo "Failed to format OpenTofu code in ''${DIR}"
           exit 1
         }

@@ -139,8 +139,8 @@ run "prism_central_darksite_without_url" {
   variables {
     prism_element = {}
     prism_central = {
-      connectivity_type = "DARKSITE_WEB_SERVER"
-      darksite_url      = null
+      connectivity_type   = "DARKSITE_WEB_SERVER"
+      darksite_url        = null
       entities_to_upgrade = {}
     }
   }
@@ -155,8 +155,8 @@ run "prism_central_prechecks_without_inventory" {
   variables {
     prism_element = {}
     prism_central = {
-      perform_inventory = false
-      perform_prechecks = true
+      perform_inventory   = false
+      perform_prechecks   = true
       entities_to_upgrade = {}
     }
   }
@@ -171,8 +171,8 @@ run "prism_central_upgrade_without_inventory" {
   variables {
     prism_element = {}
     prism_central = {
-      perform_inventory = false
-      perform_upgrade   = true
+      perform_inventory   = false
+      perform_upgrade     = true
       entities_to_upgrade = {}
     }
   }
@@ -187,7 +187,7 @@ run "prism_central_invalid_connectivity_type" {
   variables {
     prism_element = {}
     prism_central = {
-      connectivity_type = "INVALID"
+      connectivity_type   = "INVALID"
       entities_to_upgrade = {}
     }
   }
@@ -202,8 +202,8 @@ run "prism_central_valid_darksite" {
   variables {
     prism_element = {}
     prism_central = {
-      connectivity_type = "DARKSITE_WEB_SERVER"
-      darksite_url      = "https://darksite.local"
+      connectivity_type   = "DARKSITE_WEB_SERVER"
+      darksite_url        = "https://darksite.local"
       entities_to_upgrade = {}
     }
   }
