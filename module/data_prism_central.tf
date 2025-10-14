@@ -1,23 +1,27 @@
-# Lookup Prism Central
-data "nutanix_clusters_v2" "prism_central" {
+##################################################
+# Data Lookups for Prism Central
+##################################################
+
+# Lookup Prism Central cluster
+data "nutanix_clusters_v2" "prism_central_cluster" {
   limit  = 1
-  filter = "config/clusterFunction/any(t:t eq Clustermgmt.Config.ClusterFunctionRef\"PRISM_CENTRAL\")"
+  filter = "config/clusterFunction/any(t:t eq Clustermgmt.Config.ClusterFunctionRef'PRISM_CENTRAL')" # v2.2.1
 }
 
 # Lookup all LCM entities by cluster extID.
 data "nutanix_lcm_entities_v2" "prism_central_lcm_entities" {
-  filter = "clusterExtId eq '${data.nutanix_clusters_v2.prism_central.cluster_entities[0].ext_id}'"
+  filter = "clusterExtId eq '${data.nutanix_clusters_v2.prism_central_cluster.cluster_entities[0].ext_id}'"
 }
 
 # Capture the versions before any upgrade.
-data "nutanix_lcm_entity_v2" "prism_central_entities_before_upgrade" {
+data "nutanix_lcm_entity_v2" "prism_central_lcm_entities_before_upgrade" {
   for_each = { for entity in local.prism_central_lcm_entities_filtered : entity.ext_id => { ext_id = entity.ext_id, model = entity.entity_model } }
 
   ext_id = each.value.ext_id
 }
 
 # Check if there is any operation in progress before prechecks.
-data "nutanix_lcm_status_v2" "prism_central_status_before_prechecks" {
+data "nutanix_lcm_status_v2" "prism_central_lcm_status_before_prechecks" {
   count = var.prism_central.perform_prechecks ? 1 : 0
 
   x_cluster_id = local.prism_central_id
@@ -34,7 +38,7 @@ data "nutanix_lcm_status_v2" "prism_central_status_before_prechecks" {
 }
 
 # Check if there is any operation in progress before upgrade
-data "nutanix_lcm_status_v2" "prism_central_status_before_upgrade" {
+data "nutanix_lcm_status_v2" "prism_central_lcm_status_before_upgrade" {
   count = var.prism_central.perform_upgrade ? 1 : 0
 
   x_cluster_id = local.prism_central_id
@@ -51,7 +55,7 @@ data "nutanix_lcm_status_v2" "prism_central_status_before_upgrade" {
 }
 
 # Check if there is any operation in progress after upgrade
-data "nutanix_lcm_status_v2" "prism_central_status_after_upgrade" {
+data "nutanix_lcm_status_v2" "prism_central_lcm_status_after_upgrade" {
   count = var.prism_central.perform_upgrade ? 1 : 0
 
   x_cluster_id = local.prism_central_id
@@ -70,7 +74,7 @@ data "nutanix_lcm_status_v2" "prism_central_status_after_upgrade" {
 
 # TODO: Finally, check the versions before and after for all prism_central.entities_to_upgrade
 # Verify entity versions after upgrade
-data "nutanix_lcm_entity_v2" "prism_central_entities_after_upgrade" {
+data "nutanix_lcm_entity_v2" "prism_central_lcm_entities_after_upgrade" {
   for_each = { for entity in local.prism_central_lcm_entities_filtered : entity.ext_id => { ext_id = entity.ext_id, model = entity.entity_model, expected_version = (var.prism_central.entities_to_upgrade[entity.entity_model].target_version == "latest" ? entity.available_versions[length(entity.available_versions) - 1] : var.prism_central.entities_to_upgrade[entity.entity_model].target_version) } if var.prism_central.perform_upgrade && contains(keys(var.prism_central.entities_to_upgrade), entity.entity_model) && length(entity.available_versions) > 0 }
 
   ext_id = each.value.ext_id
@@ -85,12 +89,12 @@ data "nutanix_lcm_entity_v2" "prism_central_entities_after_upgrade" {
       error_message = "Entity model changed, current model: ${self.entity_model}"
     }
     postcondition {
-      condition     = self.entity_version != data.nutanix_lcm_entity_v2.prism_central_entities_before_upgrade[each.key].entity_version
+      condition     = self.entity_version != data.nutanix_lcm_entity_v2.prism_central_lcm_entities_before_upgrade[each.key].entity_version
       error_message = "Entity version did not change after upgrade"
     }
   }
   depends_on = [
     nutanix_lcm_upgrade_v2.prism_central_upgrade,
-    data.nutanix_lcm_status_v2.prism_central_status_after_upgrade
+    data.nutanix_lcm_status_v2.prism_central_lcm_status_after_upgrade
   ]
 }

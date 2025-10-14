@@ -52,7 +52,7 @@ output "prism_central_lcm_entities" {
 
 output "prism_central_entity_versions_after_upgrade" {
   description = "Prism Central entity versions after upgrade"
-  value       = data.nutanix_lcm_entity_v2.prism_central_entities_after_upgrade
+  value       = data.nutanix_lcm_entity_v2.prism_central_lcm_entities_after_upgrade
 }
 
 ##################################################
@@ -124,7 +124,7 @@ output "prism_element_summary" {
 
 output "prism_element_cluster_lcm_entities" {
   description = "Raw LCM entities data for each cluster"
-  value       = data.nutanix_lcm_entities_v2.cluster_lcm_entities
+  value       = data.nutanix_lcm_entities_v2.prism_element_lcm_entities
 }
 
 output "prism_element_cluster_entities_to_upgrade" {
@@ -144,7 +144,7 @@ output "prism_element_cluster_entities_with_updates" {
 
 output "prism_element_cluster_lcm_status_after_upgrade" {
   description = "LCM status after upgrade for each cluster"
-  value       = data.nutanix_lcm_status_v2.cluster_status_after_upgrade
+  value       = data.nutanix_lcm_status_v2.prism_element_lcm_status_after_upgrade
 }
 
 output "prism_element_missing_cluster_validation" {

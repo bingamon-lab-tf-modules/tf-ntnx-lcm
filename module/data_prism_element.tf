@@ -1,3 +1,7 @@
+##################################################
+# Data Lookups for Prism Element
+##################################################
+
 # Fatal validation if clusters are missing
 # This is to make sure the user has provided a valid name
 # to avoid a footgun situation.
@@ -12,7 +16,7 @@ data "local_file" "missing_cluster_check" {
 }
 
 # Lookup all cluster details and filter by name.
-data "nutanix_clusters_v2" "clusters" {
+data "nutanix_clusters_v2" "prism_element_cluster" {
   for_each = toset(local.prism_element_cluster_names)
 
   limit  = 1
@@ -20,21 +24,21 @@ data "nutanix_clusters_v2" "clusters" {
 }
 
 # Lookup all LCM entities by cluster extID.
-data "nutanix_lcm_entities_v2" "cluster_lcm_entities" {
+data "nutanix_lcm_entities_v2" "prism_element_lcm_entities" {
   for_each = toset(local.prism_element_cluster_names)
 
-  filter = "clusterExtId eq '${data.nutanix_clusters_v2.clusters[each.key].cluster_entities[0].ext_id}'"
+  filter = "clusterExtId eq '${data.nutanix_clusters_v2.prism_element_cluster[each.key].cluster_entities[0].ext_id}'"
 }
 
 # Capture the versions before any upgrade
-data "nutanix_lcm_entity_v2" "cluster_entity_before_upgrade" {
-  for_each = { for ent in flatten([for cluster in local.prism_element_cluster_names : [for e in data.nutanix_lcm_entities_v2.cluster_lcm_entities[cluster].entities : { cluster = cluster, ext_id = e.ext_id, model = e.entity_model }]]) : "${ent.cluster}-${ent.ext_id}" => ent }
+data "nutanix_lcm_entity_v2" "prism_element_lcm_entities_before_upgrade" {
+  for_each = { for ent in flatten([for cluster in local.prism_element_cluster_names : [for e in data.nutanix_lcm_entities_v2.prism_element_lcm_entities[cluster].entities : { cluster = cluster, ext_id = e.ext_id, model = e.entity_model }]]) : "${ent.cluster}-${ent.ext_id}" => ent }
 
   ext_id = each.value.ext_id
 }
 
 # Check if there is any operation in progress before prechecks.
-data "nutanix_lcm_status_v2" "cluster_status_before_prechecks" {
+data "nutanix_lcm_status_v2" "prism_element_lcm_status_before_prechecks" {
   for_each = { for k, v in local.prism_element_existing_clusters : k => v if v.perform_prechecks }
 
   x_cluster_id = local.prism_element_cluster_data_map[each.value.name].ext_id
@@ -49,7 +53,7 @@ data "nutanix_lcm_status_v2" "cluster_status_before_prechecks" {
 }
 
 # Check if there is any operation in progress before upgrade
-data "nutanix_lcm_status_v2" "cluster_status_before_upgrade" {
+data "nutanix_lcm_status_v2" "prism_element_lcm_status_before_upgrade" {
   for_each = { for k, v in local.prism_element_existing_clusters : k => v if v.perform_prechecks }
 
   x_cluster_id = local.prism_element_cluster_data_map[each.value.name].ext_id
@@ -64,7 +68,7 @@ data "nutanix_lcm_status_v2" "cluster_status_before_upgrade" {
 }
 
 # Check if there is any operation in progress after upgrade
-data "nutanix_lcm_status_v2" "cluster_status_after_upgrade" {
+data "nutanix_lcm_status_v2" "prism_element_lcm_status_after_upgrade" {
   for_each = { for k, v in local.prism_element_existing_clusters : k => v if v.perform_prechecks }
 
   x_cluster_id = local.prism_element_cluster_data_map[each.value.name].ext_id

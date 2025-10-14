@@ -5,7 +5,7 @@ locals {
   ##################################################
 
   # Extract the Prism Central ID
-  prism_central_id = data.nutanix_clusters_v2.prism_central.cluster_entities[0].ext_id
+  prism_central_id = data.nutanix_clusters_v2.prism_central_cluster.cluster_entities[0].ext_id
 
   # Further filter out the LCM entities, removing any Prism Element clusters.
   prism_central_lcm_entities_filtered = [
@@ -39,7 +39,7 @@ locals {
 
   # Non-AHV clusters - using correct v2 API structure
   prism_element_non_ahv_clusters = [
-    for cluster_name, cluster_data in data.nutanix_clusters_v2.clusters :
+    for cluster_name, cluster_data in data.nutanix_clusters_v2.prism_element_cluster :
     cluster_name
     if length(cluster_data.cluster_entities) > 0 &&
     try(cluster_data.cluster_entities[0].config[0].hypervisor_types[0], null) != "AHV"
@@ -72,14 +72,14 @@ locals {
   # Create a map of cluster names to their cluster entities for easy lookup
   # Based on nutanix_clusters_v2 structure - cluster data is in cluster_entities[0]
   prism_element_cluster_data_map = {
-    for cluster_name, cluster_data in data.nutanix_clusters_v2.clusters :
+    for cluster_name, cluster_data in data.nutanix_clusters_v2.prism_element_cluster :
     cluster_name => try(cluster_data.cluster_entities[0], null)
     if length(cluster_data.cluster_entities) > 0
   }
 
   # Matching entities for each Prism Element cluster that are configured for upgrade
   prism_element_cluster_matching_entities = {
-    for cluster_name, ents in data.nutanix_lcm_entities_v2.cluster_lcm_entities :
+    for cluster_name, ents in data.nutanix_lcm_entities_v2.prism_element_lcm_entities :
     local.prism_element_cluster_name_to_key[cluster_name] => [
       for ent in ents.entities :
       ent
@@ -101,19 +101,22 @@ locals {
   # Common
   ##################################################
 
+  # TODO: Merge all software entities into a single local map.
   lcm_current_entity_versions = merge(
     {
-      for key, ent in data.nutanix_lcm_entity_v2.cluster_entity_before_upgrade : key => {
-        cluster         = split("-", key)[0]
-        entity_uuid     = split("-", key)[1]
+      # Prism Central versions before upgrade.
+      for key, ent in data.nutanix_lcm_entity_v2.prism_central_lcm_entities_before_upgrade : "prism_central-${key}" => {
+        cluster         = "prism_central"
+        entity_uuid     = key
         entity_model    = ent.entity_model
         current_version = ent.entity_version
       }
     },
     {
-      for key, ent in data.nutanix_lcm_entity_v2.prism_central_entities_before_upgrade : "prism_central-${key}" => {
-        cluster         = "prism_central"
-        entity_uuid     = key
+      # Prism Element versions before upgrade.
+      for key, ent in data.nutanix_lcm_entity_v2.prism_element_lcm_entities_before_upgrade : key => {
+        cluster         = split("-", key)[0]
+        entity_uuid     = split("-", key)[1]
         entity_model    = ent.entity_model
         current_version = ent.entity_version
       }

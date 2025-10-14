@@ -14,7 +14,7 @@ resource "nutanix_lcm_config_v2" "prism_central_lcm_settings" {
   has_module_auto_upgrade_enabled = var.prism_central.has_module_auto_upgrade_enabled
 
   depends_on = [
-    data.nutanix_clusters_v2.prism_central
+    data.nutanix_clusters_v2.prism_central_cluster
   ]
 }
 
@@ -58,8 +58,8 @@ resource "nutanix_lcm_prechecks_v2" "prism_central_prechecks" {
   depends_on = [
     nutanix_lcm_perform_inventory_v2.prism_central_inventory,
     data.nutanix_lcm_entities_v2.prism_central_lcm_entities,
-    data.nutanix_lcm_entity_v2.prism_central_entities_before_upgrade,
-    data.nutanix_lcm_status_v2.prism_central_status_before_prechecks
+    data.nutanix_lcm_entity_v2.prism_central_lcm_entities_before_upgrade,
+    data.nutanix_lcm_status_v2.prism_central_lcm_status_before_prechecks
   ]
 }
 
@@ -95,6 +95,6 @@ resource "nutanix_lcm_upgrade_v2" "prism_central_upgrade" {
 
   depends_on = [
     nutanix_lcm_prechecks_v2.prism_central_prechecks,
-    data.nutanix_lcm_status_v2.prism_central_status_before_upgrade
+    data.nutanix_lcm_status_v2.prism_central_lcm_status_before_upgrade
   ]
 }
