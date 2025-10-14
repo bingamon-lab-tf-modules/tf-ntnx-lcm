@@ -283,6 +283,12 @@ in
         tofu-test "''${MODULE_HOME}" || exit 1
         tofu-docs "''${MODULE_HOME}" || exit 1
         tflint --format=compact --chdir="''${MODULE_HOME}" || exit 1
+        # Check if any files were changed during the operations
+        if ! git diff --quiet;
+        then
+            echo "The validation hook made changes to files. Please review and stage changes before committing again."
+            exit 1
+        fi
       '';
     };
 
