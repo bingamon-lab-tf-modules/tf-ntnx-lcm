@@ -125,15 +125,7 @@ in
   };
 
   git-hooks = {
-    excludes = [
-      ".cache"
-      ".devenv"
-      ".direnv"
-      ".git"
-      ".vscode"
-      "bundle"
-      "vendor"
-    ];
+    excludes = [ ];
     hooks = {
       actionlint.enable = true;
       action-validator.enable = true;
@@ -142,7 +134,7 @@ in
       check-shebang-scripts-are-executable.enable = true;
       check-symlinks.enable = true;
       check-yaml.enable = true;
-      commitizen.enable = false; # TODO: Enable when upstream is fixed.
+      commitizen.enable = true;
       convco.enable = true;
       deadnix.enable = true;
       dialyzer.enable = true;
