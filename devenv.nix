@@ -169,7 +169,9 @@ in
       pre-commit-hook-ensure-sops.enable = true;
       prettier = {
         enable = true;
-        excludes = [ ];
+        excludes = [
+          "module/README.md"
+        ];
       };
       # Use prettier instead.
       pretty-format-json.enable = false;
