@@ -5,7 +5,7 @@ terraform {
   required_providers {
     nutanix = {
       source  = "nutanix/nutanix"
-      version = "2.3.1"
+      version = "2.3.3"
     }
     local = {
       source  = "hashicorp/local"
