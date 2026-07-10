@@ -20,14 +20,14 @@ Depending on which type will determine the required variables which are describe
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
 | <a name="requirement_local"></a> [local](#requirement\_local) | ~> 2.0 |
-| <a name="requirement_nutanix"></a> [nutanix](#requirement\_nutanix) | 2.3.1 |
+| <a name="requirement_nutanix"></a> [nutanix](#requirement\_nutanix) | >= 2.4.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_local"></a> [local](#provider\_local) | 2.5.3 |
-| <a name="provider_nutanix"></a> [nutanix](#provider\_nutanix) | 2.3.1 |
+| <a name="provider_local"></a> [local](#provider\_local) | 2.9.0 |
+| <a name="provider_nutanix"></a> [nutanix](#provider\_nutanix) | 2.4.2 |
 
 ## Modules
 
@@ -37,28 +37,28 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [nutanix_lcm_config_v2.cluster_lcm_settings](https://registry.terraform.io/providers/nutanix/nutanix/2.3.1/docs/resources/lcm_config_v2) | resource |
-| [nutanix_lcm_config_v2.prism_central_lcm_settings](https://registry.terraform.io/providers/nutanix/nutanix/2.3.1/docs/resources/lcm_config_v2) | resource |
-| [nutanix_lcm_perform_inventory_v2.cluster_inventory](https://registry.terraform.io/providers/nutanix/nutanix/2.3.1/docs/resources/lcm_perform_inventory_v2) | resource |
-| [nutanix_lcm_perform_inventory_v2.prism_central_inventory](https://registry.terraform.io/providers/nutanix/nutanix/2.3.1/docs/resources/lcm_perform_inventory_v2) | resource |
-| [nutanix_lcm_prechecks_v2.cluster_prechecks](https://registry.terraform.io/providers/nutanix/nutanix/2.3.1/docs/resources/lcm_prechecks_v2) | resource |
-| [nutanix_lcm_prechecks_v2.prism_central_prechecks](https://registry.terraform.io/providers/nutanix/nutanix/2.3.1/docs/resources/lcm_prechecks_v2) | resource |
-| [nutanix_lcm_upgrade_v2.cluster_upgrade](https://registry.terraform.io/providers/nutanix/nutanix/2.3.1/docs/resources/lcm_upgrade_v2) | resource |
-| [nutanix_lcm_upgrade_v2.prism_central_upgrade](https://registry.terraform.io/providers/nutanix/nutanix/2.3.1/docs/resources/lcm_upgrade_v2) | resource |
+| [nutanix_lcm_config_v2.cluster_lcm_settings](https://registry.terraform.io/providers/nutanix/nutanix/latest/docs/resources/lcm_config_v2) | resource |
+| [nutanix_lcm_config_v2.prism_central_lcm_settings](https://registry.terraform.io/providers/nutanix/nutanix/latest/docs/resources/lcm_config_v2) | resource |
+| [nutanix_lcm_perform_inventory_v2.cluster_inventory](https://registry.terraform.io/providers/nutanix/nutanix/latest/docs/resources/lcm_perform_inventory_v2) | resource |
+| [nutanix_lcm_perform_inventory_v2.prism_central_inventory](https://registry.terraform.io/providers/nutanix/nutanix/latest/docs/resources/lcm_perform_inventory_v2) | resource |
+| [nutanix_lcm_prechecks_v2.cluster_prechecks](https://registry.terraform.io/providers/nutanix/nutanix/latest/docs/resources/lcm_prechecks_v2) | resource |
+| [nutanix_lcm_prechecks_v2.prism_central_prechecks](https://registry.terraform.io/providers/nutanix/nutanix/latest/docs/resources/lcm_prechecks_v2) | resource |
+| [nutanix_lcm_upgrade_v2.cluster_upgrade](https://registry.terraform.io/providers/nutanix/nutanix/latest/docs/resources/lcm_upgrade_v2) | resource |
+| [nutanix_lcm_upgrade_v2.prism_central_upgrade](https://registry.terraform.io/providers/nutanix/nutanix/latest/docs/resources/lcm_upgrade_v2) | resource |
 | [local_file.missing_cluster_check](https://registry.terraform.io/providers/hashicorp/local/latest/docs/data-sources/file) | data source |
-| [nutanix_clusters_v2.prism_central_cluster](https://registry.terraform.io/providers/nutanix/nutanix/2.3.1/docs/data-sources/clusters_v2) | data source |
-| [nutanix_clusters_v2.prism_element_cluster](https://registry.terraform.io/providers/nutanix/nutanix/2.3.1/docs/data-sources/clusters_v2) | data source |
-| [nutanix_lcm_entities_v2.prism_central_lcm_entities](https://registry.terraform.io/providers/nutanix/nutanix/2.3.1/docs/data-sources/lcm_entities_v2) | data source |
-| [nutanix_lcm_entities_v2.prism_element_lcm_entities](https://registry.terraform.io/providers/nutanix/nutanix/2.3.1/docs/data-sources/lcm_entities_v2) | data source |
-| [nutanix_lcm_entity_v2.prism_central_lcm_entities_after_upgrade](https://registry.terraform.io/providers/nutanix/nutanix/2.3.1/docs/data-sources/lcm_entity_v2) | data source |
-| [nutanix_lcm_entity_v2.prism_central_lcm_entities_before_upgrade](https://registry.terraform.io/providers/nutanix/nutanix/2.3.1/docs/data-sources/lcm_entity_v2) | data source |
-| [nutanix_lcm_entity_v2.prism_element_lcm_entities_before_upgrade](https://registry.terraform.io/providers/nutanix/nutanix/2.3.1/docs/data-sources/lcm_entity_v2) | data source |
-| [nutanix_lcm_status_v2.prism_central_lcm_status_after_upgrade](https://registry.terraform.io/providers/nutanix/nutanix/2.3.1/docs/data-sources/lcm_status_v2) | data source |
-| [nutanix_lcm_status_v2.prism_central_lcm_status_before_prechecks](https://registry.terraform.io/providers/nutanix/nutanix/2.3.1/docs/data-sources/lcm_status_v2) | data source |
-| [nutanix_lcm_status_v2.prism_central_lcm_status_before_upgrade](https://registry.terraform.io/providers/nutanix/nutanix/2.3.1/docs/data-sources/lcm_status_v2) | data source |
-| [nutanix_lcm_status_v2.prism_element_lcm_status_after_upgrade](https://registry.terraform.io/providers/nutanix/nutanix/2.3.1/docs/data-sources/lcm_status_v2) | data source |
-| [nutanix_lcm_status_v2.prism_element_lcm_status_before_prechecks](https://registry.terraform.io/providers/nutanix/nutanix/2.3.1/docs/data-sources/lcm_status_v2) | data source |
-| [nutanix_lcm_status_v2.prism_element_lcm_status_before_upgrade](https://registry.terraform.io/providers/nutanix/nutanix/2.3.1/docs/data-sources/lcm_status_v2) | data source |
+| [nutanix_clusters_v2.prism_central_cluster](https://registry.terraform.io/providers/nutanix/nutanix/latest/docs/data-sources/clusters_v2) | data source |
+| [nutanix_clusters_v2.prism_element_cluster](https://registry.terraform.io/providers/nutanix/nutanix/latest/docs/data-sources/clusters_v2) | data source |
+| [nutanix_lcm_entities_v2.prism_central_lcm_entities](https://registry.terraform.io/providers/nutanix/nutanix/latest/docs/data-sources/lcm_entities_v2) | data source |
+| [nutanix_lcm_entities_v2.prism_element_lcm_entities](https://registry.terraform.io/providers/nutanix/nutanix/latest/docs/data-sources/lcm_entities_v2) | data source |
+| [nutanix_lcm_entity_v2.prism_central_lcm_entities_after_upgrade](https://registry.terraform.io/providers/nutanix/nutanix/latest/docs/data-sources/lcm_entity_v2) | data source |
+| [nutanix_lcm_entity_v2.prism_central_lcm_entities_before_upgrade](https://registry.terraform.io/providers/nutanix/nutanix/latest/docs/data-sources/lcm_entity_v2) | data source |
+| [nutanix_lcm_entity_v2.prism_element_lcm_entities_before_upgrade](https://registry.terraform.io/providers/nutanix/nutanix/latest/docs/data-sources/lcm_entity_v2) | data source |
+| [nutanix_lcm_status_v2.prism_central_lcm_status_after_upgrade](https://registry.terraform.io/providers/nutanix/nutanix/latest/docs/data-sources/lcm_status_v2) | data source |
+| [nutanix_lcm_status_v2.prism_central_lcm_status_before_prechecks](https://registry.terraform.io/providers/nutanix/nutanix/latest/docs/data-sources/lcm_status_v2) | data source |
+| [nutanix_lcm_status_v2.prism_central_lcm_status_before_upgrade](https://registry.terraform.io/providers/nutanix/nutanix/latest/docs/data-sources/lcm_status_v2) | data source |
+| [nutanix_lcm_status_v2.prism_element_lcm_status_after_upgrade](https://registry.terraform.io/providers/nutanix/nutanix/latest/docs/data-sources/lcm_status_v2) | data source |
+| [nutanix_lcm_status_v2.prism_element_lcm_status_before_prechecks](https://registry.terraform.io/providers/nutanix/nutanix/latest/docs/data-sources/lcm_status_v2) | data source |
+| [nutanix_lcm_status_v2.prism_element_lcm_status_before_upgrade](https://registry.terraform.io/providers/nutanix/nutanix/latest/docs/data-sources/lcm_status_v2) | data source |
 
 ## Inputs
 
