@@ -51,7 +51,6 @@ reports/
 
 # Devenv
 .devenv*
-.devcontainer/
 devenv.local.nix
 
 # direnv
