@@ -27,6 +27,11 @@ output "lcm_current_entity_versions" {
   value       = local.lcm_current_entity_versions
 }
 
+output "lcm_latest_version_by_entity" {
+  description = "Entity ext_id => the version that target_version = \"latest\" resolves to, ranked by the API's `order` field. Entities pinned to an explicit target_version are unaffected by this map."
+  value       = local.lcm_latest_version_by_entity
+}
+
 ##################################################
 # Prism Central Outputs
 ##################################################
@@ -176,6 +181,7 @@ output "outputs" {
       }
     }
     lcm_current_entity_versions                 = local.lcm_current_entity_versions
+    lcm_latest_version_by_entity                = local.lcm_latest_version_by_entity
     prism_central_entities_to_upgrade           = var.prism_central.entities_to_upgrade
     prism_central_matching_entities             = local.prism_central_matching_entities
     prism_central_entities_with_updates         = local.prism_central_entities_with_updates

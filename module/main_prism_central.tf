@@ -39,8 +39,10 @@ resource "nutanix_lcm_prechecks_v2" "prism_central_prechecks" {
     for_each = { for ent in local.prism_central_entities_with_updates : ent.ext_id => ent }
     content {
       entity_uuid = entity_update_specs.key # The entity's UUID
+      # "latest" resolves by the API's `order` ranking, never by list position —
+      # available_versions comes back unordered. See locals.tf.
       to_version = var.prism_central.entities_to_upgrade[entity_update_specs.value.entity_model].target_version == "latest" ? (
-        length(entity_update_specs.value.available_versions) > 0 ? entity_update_specs.value.available_versions[length(entity_update_specs.value.available_versions) - 1].version : entity_update_specs.value.entity_version
+        local.lcm_latest_version_by_entity[entity_update_specs.key]
       ) : var.prism_central.entities_to_upgrade[entity_update_specs.value.entity_model].target_version
     }
   }
@@ -77,8 +79,10 @@ resource "nutanix_lcm_upgrade_v2" "prism_central_upgrade" {
     for_each = { for ent in local.prism_central_entities_with_updates : ent.ext_id => ent }
     content {
       entity_uuid = entity_update_specs.key # The entity's UUID
+      # "latest" resolves by the API's `order` ranking, never by list position —
+      # available_versions comes back unordered. See locals.tf.
       to_version = var.prism_central.entities_to_upgrade[entity_update_specs.value.entity_model].target_version == "latest" ? (
-        length(entity_update_specs.value.available_versions) > 0 ? entity_update_specs.value.available_versions[length(entity_update_specs.value.available_versions) - 1].version : entity_update_specs.value.entity_version
+        local.lcm_latest_version_by_entity[entity_update_specs.key]
       ) : var.prism_central.entities_to_upgrade[entity_update_specs.value.entity_model].target_version
     }
   }

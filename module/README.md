@@ -73,6 +73,7 @@ No modules.
 |------|-------------|
 | <a name="output_lcm_current_entity_versions"></a> [lcm\_current\_entity\_versions](#output\_lcm\_current\_entity\_versions) | Current versions of entities before upgrade |
 | <a name="output_lcm_entities_summary"></a> [lcm\_entities\_summary](#output\_lcm\_entities\_summary) | Summary of entities configured vs entities with updates |
+| <a name="output_lcm_latest_version_by_entity"></a> [lcm\_latest\_version\_by\_entity](#output\_lcm\_latest\_version\_by\_entity) | Entity ext\_id => the version that target\_version = "latest" resolves to, ranked by the API's `order` field. Entities pinned to an explicit target\_version are unaffected by this map. |
 | <a name="output_outputs"></a> [outputs](#output\_outputs) | Aggregate of all module outputs (spec §7.6 contract, consumed by the landing zone as module.<x>.outputs). |
 | <a name="output_prism_central_entities_to_upgrade"></a> [prism\_central\_entities\_to\_upgrade](#output\_prism\_central\_entities\_to\_upgrade) | Configured entities to upgrade for Prism Central |
 | <a name="output_prism_central_entities_with_updates"></a> [prism\_central\_entities\_with\_updates](#output\_prism\_central\_entities\_with\_updates) | Prism Central entities that have available updates |
