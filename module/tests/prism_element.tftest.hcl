@@ -75,10 +75,12 @@ mock_provider "nutanix" {
     }
   }
 
-  # Prism Element entity lookup
+  # Prism Element entity lookup.
+  # ext_id is a required input on this data source, not a computed field, so it
+  # cannot be mocked — doing so only went unnoticed while every test mocked an
+  # empty entity list and this data source therefore had no instances.
   mock_data "nutanix_lcm_entity_v2" {
     defaults = {
-      ext_id         = "mock-id"
       entity_model   = "mock"
       entity_version = "0.0.0"
     }
@@ -332,5 +334,194 @@ run "prism_element_multiple_clusters" {
   assert {
     condition     = length(output.prism_element_summary.darksite_clusters) == 1
     error_message = "Expected 1 darksite cluster"
+  }
+}
+
+# Test 11: "latest" resolves by the API's `order` field, not by list position.
+#
+# The LCM API returns available_versions unordered.
+#
+# NCC is here to cover the second half of the rule:
+# the highest-ordered version is disabled, so it must not win.
+run "prism_element_latest_resolves_by_order" {
+  command = plan
+
+  variables {
+    prism_element = {
+      "test" = {
+        name              = "test"
+        perform_inventory = true
+        perform_prechecks = true
+      }
+    }
+    prism_central = {}
+  }
+
+  override_data {
+    target = data.nutanix_lcm_entities_v2.prism_element_lcm_entities
+    values = {
+      entities = [
+        {
+          ext_id         = "9bc0e3ec-d3f5-4244-967c-bac006498b08"
+          entity_model   = "FSM"
+          entity_version = "5.2.1"
+          cluster_ext_id = "00000000-0000-0000-0000-000000000000"
+          device_id      = ""
+
+          # Scaffolding: overrides must supply every attribute of the schema.
+          tenant_id          = ""
+          entity_class       = ""
+          entity_type        = ""
+          entity_description = ""
+          entity_details     = []
+          hardware_family    = ""
+          hardware_vendor    = ""
+          target_version     = ""
+          last_updated_time  = ""
+          group_uuid         = ""
+          links              = []
+          location_info      = []
+          sub_entities       = []
+          child_entities     = []
+
+          available_versions = [
+            {
+              version                = "5.3.0.2"
+              order                  = 32
+              status                 = "AVAILABLE"
+              is_enabled             = true
+              available_version_uuid = ""
+              disablement_reason     = ""
+              release_notes          = ""
+              release_date           = ""
+              custom_message         = ""
+              child_entities         = []
+              group_uuid             = ""
+              dependencies           = []
+            },
+            {
+              version                = "5.3"
+              order                  = 30
+              status                 = "AVAILABLE"
+              is_enabled             = true
+              available_version_uuid = ""
+              disablement_reason     = ""
+              release_notes          = ""
+              release_date           = ""
+              custom_message         = ""
+              child_entities         = []
+              group_uuid             = ""
+              dependencies           = []
+            },
+            {
+              version                = "5.3.0.3"
+              order                  = 33
+              status                 = "AVAILABLE"
+              is_enabled             = true
+              available_version_uuid = ""
+              disablement_reason     = ""
+              release_notes          = ""
+              release_date           = ""
+              custom_message         = ""
+              child_entities         = []
+              group_uuid             = ""
+              dependencies           = []
+            },
+            {
+              version                = "5.3.0.1"
+              order                  = 31
+              status                 = "AVAILABLE"
+              is_enabled             = true
+              available_version_uuid = ""
+              disablement_reason     = ""
+              release_notes          = ""
+              release_date           = ""
+              custom_message         = ""
+              child_entities         = []
+              group_uuid             = ""
+              dependencies           = []
+            },
+            {
+              version                = "5.2.1.2"
+              order                  = 29
+              status                 = "AVAILABLE"
+              is_enabled             = true
+              available_version_uuid = ""
+              disablement_reason     = ""
+              release_notes          = ""
+              release_date           = ""
+              custom_message         = ""
+              child_entities         = []
+              group_uuid             = ""
+              dependencies           = []
+            },
+          ]
+        },
+        {
+          ext_id         = "8b1920c1-de2c-4b73-abc8-7f7ec086dba6"
+          entity_model   = "NCC"
+          entity_version = "5.3.1"
+          cluster_ext_id = "00000000-0000-0000-0000-000000000000"
+          device_id      = ""
+
+          # Scaffolding: overrides must supply every attribute of the schema.
+          tenant_id          = ""
+          entity_class       = ""
+          entity_type        = ""
+          entity_description = ""
+          entity_details     = []
+          hardware_family    = ""
+          hardware_vendor    = ""
+          target_version     = ""
+          last_updated_time  = ""
+          group_uuid         = ""
+          links              = []
+          location_info      = []
+          sub_entities       = []
+          child_entities     = []
+
+          available_versions = [
+            {
+              version                = "5.4.0"
+              order                  = 20
+              status                 = "AVAILABLE"
+              is_enabled             = false
+              available_version_uuid = ""
+              disablement_reason     = ""
+              release_notes          = ""
+              release_date           = ""
+              custom_message         = ""
+              child_entities         = []
+              group_uuid             = ""
+              dependencies           = []
+            },
+            {
+              version                = "5.3.1.1"
+              order                  = 12
+              status                 = "AVAILABLE"
+              is_enabled             = true
+              available_version_uuid = ""
+              disablement_reason     = ""
+              release_notes          = ""
+              release_date           = ""
+              custom_message         = ""
+              child_entities         = []
+              group_uuid             = ""
+              dependencies           = []
+            },
+          ]
+        },
+      ]
+    }
+  }
+
+  assert {
+    condition     = output.lcm_latest_version_by_entity["9bc0e3ec-d3f5-4244-967c-bac006498b08"] == "5.3.0.3"
+    error_message = "FSM 'latest' must resolve to the highest-ordered version 5.3.0.3, got ${output.lcm_latest_version_by_entity["9bc0e3ec-d3f5-4244-967c-bac006498b08"]}"
+  }
+
+  assert {
+    condition     = output.lcm_latest_version_by_entity["8b1920c1-de2c-4b73-abc8-7f7ec086dba6"] == "5.3.1.1"
+    error_message = "NCC 'latest' must skip the disabled 5.4.0 and resolve to 5.3.1.1, got ${output.lcm_latest_version_by_entity["8b1920c1-de2c-4b73-abc8-7f7ec086dba6"]}"
   }
 }

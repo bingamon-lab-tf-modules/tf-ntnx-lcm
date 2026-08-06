@@ -101,6 +101,64 @@ locals {
   # Common
   ##################################################
 
+  ##################################################
+  # Resolving target_version = "latest"
+  #
+  # The LCM API returns `available_versions` UNORDERED, and the order differs
+  # between calls — two data sources reading the same entity in a single
+  # refresh can hand back the same five versions in two different sequences.
+  # Taking the last element of the list therefore resolved "latest" to a
+  # different version on almost every run, which surfaced as a permanent
+  # in-place diff on the prechecks resource (whose provider Read is a no-op, so
+  # state never reconciles) and would have upgraded an entity to an arbitrary
+  # one of its available versions rather than the newest.
+  #
+  # `order` is the API's own monotonic ranking of the version list, so the
+  # highest order is the newest version. Everything below keys off that instead
+  # of list position.
+  ##################################################
+
+  # Every entity, on either plane, that is configured for upgrade and has at
+  # least one available version. ext_ids are UUIDs, so one flat map is safe.
+  lcm_upgradable_entities = concat(
+    local.prism_central_entities_with_updates,
+    flatten([for cluster_key, ents in local.prism_element_cluster_entities_with_updates : ents]),
+  )
+
+  # Versions LCM will actually accept as an upgrade target. A version that is
+  # listed but disabled (dependency unmet, not staged on the darksite mirror)
+  # is not a candidate for "latest".
+  lcm_selectable_versions = {
+    for ent in local.lcm_upgradable_entities :
+    ent.ext_id => [
+      for av in ent.available_versions : av
+      if try(av.is_enabled, true) && try(av.status, "AVAILABLE") == "AVAILABLE"
+    ]
+  }
+
+  # Highest `order` per entity. The trailing -1 keeps max() total for entities
+  # whose versions are all disabled, where the list is empty.
+  lcm_highest_version_order = {
+    for ext_id, avs in local.lcm_selectable_versions :
+    ext_id => max(concat([for av in avs : try(av.order, -1)], [-1])...)
+  }
+
+  # ext_id => the version "latest" resolves to. sort()[0] only ever breaks a
+  # tie on `order`, which the API should not produce; it is there so that even
+  # a malformed response resolves deterministically rather than by list order.
+  # Falls back to the entity's current version when nothing is selectable,
+  # matching the previous behaviour of leaving the entity where it is.
+  lcm_latest_version_by_entity = {
+    for ent in local.lcm_upgradable_entities :
+    ent.ext_id => try(
+      sort([
+        for av in local.lcm_selectable_versions[ent.ext_id] : av.version
+        if try(av.order, -1) == local.lcm_highest_version_order[ent.ext_id]
+      ])[0],
+      ent.entity_version
+    )
+  }
+
   # TODO: Merge all software entities into a single local map.
   lcm_current_entity_versions = merge(
     {
