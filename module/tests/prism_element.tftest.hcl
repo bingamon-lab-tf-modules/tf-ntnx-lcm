@@ -369,20 +369,21 @@ run "prism_element_latest_resolves_by_order" {
           device_id      = ""
 
           # Scaffolding: overrides must supply every attribute of the schema.
-          tenant_id          = ""
-          entity_class       = ""
-          entity_type        = ""
-          entity_description = ""
-          entity_details     = []
-          hardware_family    = ""
-          hardware_vendor    = ""
-          target_version     = ""
-          last_updated_time  = ""
-          group_uuid         = ""
-          links              = []
-          location_info      = []
-          sub_entities       = []
-          child_entities     = []
+          tenant_id                     = ""
+          entity_class                  = ""
+          entity_type                   = ""
+          entity_description            = ""
+          entity_details                = []
+          hardware_family               = ""
+          hardware_vendor               = ""
+          target_version                = ""
+          last_updated_time             = ""
+          group_uuid                    = ""
+          has_previous_inventory_failed = false
+          links                         = []
+          location_info                 = []
+          sub_entities                  = []
+          child_entities                = []
 
           available_versions = [
             {
@@ -465,20 +466,21 @@ run "prism_element_latest_resolves_by_order" {
           device_id      = ""
 
           # Scaffolding: overrides must supply every attribute of the schema.
-          tenant_id          = ""
-          entity_class       = ""
-          entity_type        = ""
-          entity_description = ""
-          entity_details     = []
-          hardware_family    = ""
-          hardware_vendor    = ""
-          target_version     = ""
-          last_updated_time  = ""
-          group_uuid         = ""
-          links              = []
-          location_info      = []
-          sub_entities       = []
-          child_entities     = []
+          tenant_id                     = ""
+          entity_class                  = ""
+          entity_type                   = ""
+          entity_description            = ""
+          entity_details                = []
+          hardware_family               = ""
+          hardware_vendor               = ""
+          target_version                = ""
+          last_updated_time             = ""
+          group_uuid                    = ""
+          has_previous_inventory_failed = false
+          links                         = []
+          location_info                 = []
+          sub_entities                  = []
+          child_entities                = []
 
           available_versions = [
             {
