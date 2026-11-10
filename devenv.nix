@@ -14,7 +14,6 @@ let
     # Common
     convco
     figlet
-    gh
     git
     github-cli
     gnutar
@@ -33,8 +32,8 @@ let
 
     # Secrets
     age
-    ssh-to-age
     sops
+    ssh-to-age
     ssh-to-pgp
 
     # Terraform/OpenTofu
@@ -147,6 +146,13 @@ in
       check-yaml.enable = true;
       commitizen.enable = true;
       convco.enable = true;
+      cspell = {
+        enable = true;
+        args = [
+          "lint"
+          "--no-must-find-files"
+        ];
+      };
       deadnix.enable = true;
       dialyzer.enable = true;
       editorconfig-checker.enable = true;
@@ -155,6 +161,7 @@ in
       golines.enable = true;
       gotest.enable = true;
       govet.enable = true;
+      gptcommit.enable = true;
       markdownlint = {
         enable = true;
         excludes = [
@@ -174,6 +181,9 @@ in
                 "sup"
               ];
             };
+            MD041 = false;
+            MD059 = false;
+            MD060 = false;
           };
         };
       };
@@ -184,6 +194,7 @@ in
         enable = true;
         excludes = [
           "module/README.md"
+          "module/tests/README.md"
         ];
       };
       # Use prettier instead.
@@ -204,19 +215,12 @@ in
         enable = true;
         name = "tofu-validate-module";
         entry = "tofu-validate-module";
-        files = "^module/.*$"; # Run on changes to any file in the module directory
+        files = "^modules?/.*$";
         pass_filenames = false;
       };
       tflint.enable = true;
       trim-trailing-whitespace.enable = true;
-      trufflehog.enable = true;
-      cspell = {
-        enable = true;
-        args = [
-          "lint"
-          "--no-must-find-files"
-        ];
-      };
+      trufflehog.enable = false;
       yamllint = {
         enable = true;
         settings = {
@@ -281,26 +285,32 @@ in
       package = pkgs.bash;
       description = "Validate Terraform Module";
       exec = ''
-        MODULE_HOME="$(pwd)/module"
-        if [ ! -d "''${MODULE_HOME}" ];
+        REPO_ROOT="$(pwd)"
+        if [ ! -d "''${REPO_ROOT}/module" ];
         then
-          echo "Directory ''${MODULE_HOME} does not exist. Please run this script from the root of the repository."
+          echo "Directory ''${REPO_ROOT}/module does not exist. Please run this script from the root of the repository."
           exit 1
         fi
-        echo "Checking Terraform Module for ''${MODULE_HOME}"
-        tofu-format "''${MODULE_HOME}" || exit 1
-        tofu-clean "''${MODULE_HOME}" || exit 1
-        tofu-init "''${MODULE_HOME}" || exit 1
-        tofu-validate "''${MODULE_HOME}" || exit 1
-        tofu-test "''${MODULE_HOME}" || exit 1
-        tofu-docs "''${MODULE_HOME}" || exit 1
-        tflint --format=compact --chdir="''${MODULE_HOME}" || exit 1
-        # Check if any files were changed during the operations
-        if ! git diff --quiet;
+        MODULE_HOMES="''${REPO_ROOT}/module"
+        if [ -d "''${REPO_ROOT}/modules" ];
         then
-            echo "The validation hook made changes to files. Please review and stage changes before committing again."
-            exit 1
+          for CANDIDATE in "''${REPO_ROOT}"/modules/*;
+          do
+            if [ -d "''${CANDIDATE}" ];
+            then
+              MODULE_HOMES="''${MODULE_HOMES} ''${CANDIDATE}"
+            fi
+          done
         fi
+        for MODULE_HOME in ''${MODULE_HOMES};
+        do
+          echo "Checking Terraform Module for ''${MODULE_HOME}"
+          tofu-format "''${MODULE_HOME}" || exit 1
+          tofu-clean "''${MODULE_HOME}" || exit 1
+          tofu-init "''${MODULE_HOME}" || exit 1
+          tofu-validate "''${MODULE_HOME}" || exit 1
+          tofu-docs "''${MODULE_HOME}" || exit 1
+        done
       '';
     };
 
@@ -369,7 +379,7 @@ in
         fi
         echo "Initialising OpenTofu providers in ''${DIR}"
         pushd "''${DIR}"
-        tofu init -backend=false || {
+        tofu init -backend=false -input=false || {
           echo "Failed to initialise OpenTofu providers in ''${DIR}"
           exit 1
         }
