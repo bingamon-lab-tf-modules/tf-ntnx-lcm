@@ -7,9 +7,11 @@ variable "prism_central" {
   description = "Prism Central configuration for LCM actions."
   type = object({
     # General & Actions
-    perform_inventory = optional(bool, false) # Whether to perform an inventory scan.
-    perform_prechecks = optional(bool, false) # Whether to perform upgrade pre-checks.
-    perform_upgrade   = optional(bool, false) # Whether to perform the upgrade.
+    perform_inventory = optional(bool, false)        # Whether to perform an inventory scan.
+    inventory_type    = optional(string, null)       # Optional inventory type for nutanix_lcm_perform_inventory_v2.
+    node_list         = optional(list(string), null) # Optional node UUIDs for node-level inventory.
+    perform_prechecks = optional(bool, false)        # Whether to perform upgrade pre-checks.
+    perform_upgrade   = optional(bool, false)        # Whether to perform the upgrade.
 
     # LCM Configuration for Prism Central
     connectivity_type               = optional(string, "INTERNET")
@@ -139,9 +141,11 @@ variable "prism_element" {
   type = map(object({
     # General & Actions
     name              = string
-    perform_inventory = optional(bool, false) # Whether to perform an inventory scan.
-    perform_prechecks = optional(bool, false) # Whether to perform pre-checks.
-    perform_upgrade   = optional(bool, false) # Whether to perform an upgrade.
+    perform_inventory = optional(bool, false)        # Whether to perform an inventory scan.
+    inventory_type    = optional(string, null)       # Optional inventory type for nutanix_lcm_perform_inventory_v2.
+    node_list         = optional(list(string), null) # Optional node UUIDs for node-level inventory.
+    perform_prechecks = optional(bool, false)        # Whether to perform pre-checks.
+    perform_upgrade   = optional(bool, false)        # Whether to perform an upgrade.
 
     # LCM Configuration (per-cluster)
     connectivity_type               = optional(string, "INTERNET")

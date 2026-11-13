@@ -24,7 +24,9 @@ resource "nutanix_lcm_config_v2" "cluster_lcm_settings" {
 resource "nutanix_lcm_perform_inventory_v2" "cluster_inventory" {
   for_each = { for k, v in local.prism_element_existing_clusters : k => v if v.perform_inventory }
 
-  x_cluster_id = local.prism_element_cluster_data_map[each.value.name].ext_id
+  x_cluster_id   = local.prism_element_cluster_data_map[each.value.name].ext_id
+  inventory_type = each.value.inventory_type
+  node_list      = each.value.node_list
 
   depends_on = [
     nutanix_lcm_config_v2.cluster_lcm_settings
