@@ -22,7 +22,9 @@ resource "nutanix_lcm_config_v2" "prism_central_lcm_settings" {
 resource "nutanix_lcm_perform_inventory_v2" "prism_central_inventory" {
   count = var.prism_central.perform_inventory ? 1 : 0
 
-  x_cluster_id = local.prism_central_id
+  x_cluster_id   = local.prism_central_id
+  inventory_type = var.prism_central.inventory_type
+  node_list      = var.prism_central.node_list
 
   depends_on = [
     nutanix_lcm_config_v2.prism_central_lcm_settings
